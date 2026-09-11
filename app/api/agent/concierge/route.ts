@@ -3,6 +3,7 @@ import { z } from "zod"
 import { createLlmClient } from "@/lib/agent/client"
 import { runConcierge } from "@/lib/agent/run"
 import { getDb } from "@/lib/db/sql"
+import { clientIp, CONCIERGE_LIMIT_PER_MIN, rateLimit } from "@/lib/rateLimit"
 
 const MAX_HISTORY = 10
 
@@ -32,9 +33,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid request", details: z.prettifyError(parsed.error) }, { status: 400 })
   }
 
+  const db = await getDb()
+  if (!(await rateLimit(db, `chat:${clientIp(req.headers)}`, CONCIERGE_LIMIT_PER_MIN))) {
+    return NextResponse.json(
+      { error: "too many messages — take a breath and try again in a minute" },
+      { status: 429 },
+    )
+  }
+
   try {
     const llm = createLlmClient()
-    const db = await getDb()
     const history = parsed.data.messages.slice(-MAX_HISTORY)
     const res = await runConcierge(
       { llm, db },

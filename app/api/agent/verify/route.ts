@@ -3,6 +3,7 @@ import { z } from "zod"
 import { createLlmClient } from "@/lib/agent/client"
 import { verifySubmission } from "@/lib/pipeline/verifySubmission"
 import { getDb } from "@/lib/db/sql"
+import { clientIp, rateLimit, VERIFY_LIMIT_PER_MIN } from "@/lib/rateLimit"
 import { SubmissionInputSchema } from "@/lib/schemas/submission"
 
 // Honeypot: bots fill hidden fields. Silently accept so they don't learn.
@@ -30,9 +31,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: "new", submissionId: null })
   }
 
+  const db = await getDb()
+  if (!(await rateLimit(db, `verify:${clientIp(req.headers)}`, VERIFY_LIMIT_PER_MIN))) {
+    return NextResponse.json(
+      { error: "too many submissions — try again in a minute" },
+      { status: 429 },
+    )
+  }
+
   try {
     const llm = createLlmClient()
-    const db = await getDb()
     const result = await verifySubmission(
       { llm, db },
       {

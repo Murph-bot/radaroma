@@ -20,9 +20,7 @@
     {
       "binding": "DB",
       "database_name": "pour-compass",
-      // Placeholder until `wrangler d1 create pour-compass` at deploy time.
-      // Local dev and preview work with any UUID.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "d8dc40f7-6463-41bf-a3e0-f4ee49344a96",
       "migrations_dir": "migrations"
     }
   ]
