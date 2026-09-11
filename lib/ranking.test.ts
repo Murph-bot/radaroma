@@ -1,0 +1,99 @@
+import { describe, expect, it } from "vitest"
+import { DEFAULT_WEIGHTS, rankCafes, weightedScore, type Weights } from "./ranking"
+import type { Cafe } from "@/lib/schemas/cafe"
+import type { CafeScore } from "@/lib/schemas/score"
+
+const cafe = (id: string, name: string): Cafe => ({
+  id,
+  slug: id,
+  name,
+  address: "x",
+  lat: null,
+  lng: null,
+  neighborhood: "Test",
+  priceTier: 2,
+  source: "owner",
+  status: "verified",
+  confidenceScore: null,
+  verificationNotes: null,
+})
+
+const score = (id: string, values: Partial<CafeScore> = {}): CafeScore => ({
+  cafeId: id,
+  scoredBy: "curator",
+  quality: 3,
+  priceValue: 3,
+  workFriendliness: 3,
+  quietVibe: 3,
+  specialtyDepth: 3,
+  ...values,
+})
+
+describe("weightedScore", () => {
+  it("equals the plain average with default weights", () => {
+    const s = score("a", { quality: 5, priceValue: 1, workFriendliness: 3, quietVibe: 4, specialtyDepth: 2 })
+    expect(weightedScore(s, DEFAULT_WEIGHTS)).toBe(3)
+  })
+
+  it("shifts toward heavily weighted axes", () => {
+    const s = score("a", { quality: 5, priceValue: 1, workFriendliness: 1, quietVibe: 1, specialtyDepth: 1 })
+    const weights: Weights = { ...DEFAULT_WEIGHTS, quality: 10 }
+    // (10*5 + 1 + 1 + 1 + 1) / 14
+    expect(weightedScore(s, weights)).toBeCloseTo((50 + 4) / 14, 10)
+  })
+
+  it("returns 0 when all weights are zero", () => {
+    const zero: Weights = { quality: 0, priceValue: 0, workFriendliness: 0, quietVibe: 0, specialtyDepth: 0 }
+    expect(weightedScore(score("a"), zero)).toBe(0)
+  })
+})
+
+describe("rankCafes", () => {
+  const cafes = [cafe("a", "Alpha"), cafe("b", "Beta"), cafe("c", "Gamma"), cafe("d", "Delta")]
+
+  it("orders by weighted score descending", () => {
+    const scores = new Map([
+      ["a", score("a", { quality: 5, priceValue: 5, workFriendliness: 5, quietVibe: 5, specialtyDepth: 5 })],
+      ["b", score("b", { quality: 1, priceValue: 1, workFriendliness: 1, quietVibe: 1, specialtyDepth: 1 })],
+      ["c", score("c", { quality: 3, priceValue: 3, workFriendliness: 3, quietVibe: 3, specialtyDepth: 3 })],
+    ])
+    const ranked = rankCafes(cafes, scores)
+    expect(ranked.map((r) => r.cafe.slug)).toEqual(["a", "c", "b", "d"])
+  })
+
+  it("sorts cafés without scores last, alphabetically", () => {
+    const scores = new Map([["a", score("a")]])
+    const ranked = rankCafes(cafes, scores)
+    expect(ranked[0].cafe.slug).toBe("a")
+    expect(ranked.slice(1).map((r) => r.cafe.slug)).toEqual(["b", "d", "c"])
+  })
+
+  it("breaks ties by name", () => {
+    const scores = new Map([
+      ["a", score("a")],
+      ["b", score("b")],
+    ])
+    const ranked = rankCafes([cafe("b", "Beta"), cafe("a", "Alpha")], scores)
+    expect(ranked.map((r) => r.cafe.slug)).toEqual(["a", "b"])
+  })
+
+  it("respects weights in ordering", () => {
+    // Alpha excels at quality only; Beta is a steady all-rounder.
+    const scores = new Map([
+      ["a", score("a", { quality: 5, priceValue: 2, workFriendliness: 2, quietVibe: 2, specialtyDepth: 2 })],
+      ["b", score("b", { quality: 3, priceValue: 3, workFriendliness: 3, quietVibe: 3, specialtyDepth: 3 })],
+    ])
+    const defaultOrder = rankCafes([cafe("a", "Alpha"), cafe("b", "Beta")], scores)
+    expect(defaultOrder.map((r) => r.cafe.slug)).toEqual(["b", "a"])
+
+    const qualityOnly: Weights = { ...DEFAULT_WEIGHTS, quality: 5, priceValue: 0.5, workFriendliness: 0.5, quietVibe: 0.5, specialtyDepth: 0.5 }
+    const qualityOrder = rankCafes([cafe("a", "Alpha"), cafe("b", "Beta")], scores, qualityOnly)
+    expect(qualityOrder.map((r) => r.cafe.slug)).toEqual(["a", "b"])
+  })
+
+  it("keeps rankScore on the 1-5 scale", () => {
+    const scores = new Map([["a", score("a", { quality: 5, priceValue: 5, workFriendliness: 5, quietVibe: 5, specialtyDepth: 5 })]])
+    const ranked = rankCafes([cafe("a", "Alpha")], scores)
+    expect(ranked[0].rankScore).toBe(5)
+  })
+})
