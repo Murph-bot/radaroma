@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "preview": "opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare deploy",
-    "seed": "tsx scripts/seed-cafes.ts"
+    "seed": "tsx scripts/seed-cafes.ts",
+    "smoke:db": "tsx scripts/smoke-db.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
