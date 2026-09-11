@@ -2,42 +2,12 @@
 // SQLite file `npm run preview` serves. Creates + deletes its own rows.
 // Prereq: `npm run db:migrate:local`
 // Run: npm run smoke:db
-import { existsSync, readdirSync, statSync } from "node:fs"
-import { join } from "node:path"
-import Database from "better-sqlite3"
-import { sqliteDb } from "../lib/db/sql"
+import { openLocalD1 } from "./local-d1"
 import { CafeRepository } from "../lib/db/repositories/cafes"
 import { SubmissionRepository } from "../lib/db/repositories/submissions"
 
-// Find the actual D1 database file under .wrangler/state/v3/d1/ — the name
-// is a content hash, so we scan for *.sqlite files that aren't miniflare
-// metadata or WAL/SHM sidecars.
-function findLocalD1Db(): string {
-  const base = ".wrangler/state/v3/d1"
-  if (!existsSync(base)) return ""
-  const walk = (dir: string): string => {
-    for (const entry of readdirSync(dir)) {
-      const full = join(dir, entry)
-      if (statSync(full).isDirectory()) {
-        const found = walk(full)
-        if (found) return found
-      } else if (entry.endsWith(".sqlite") && entry !== "metadata.sqlite") {
-        return full
-      }
-    }
-    return ""
-  }
-  return walk(base)
-}
-
 async function main() {
-  const dbFile = findLocalD1Db()
-  if (!dbFile) {
-    throw new Error(
-      "local D1 database not found — run `npm run db:migrate:local` first",
-    )
-  }
-  const db = sqliteDb(new Database(dbFile))
+  const db = openLocalD1()
   const cafes = new CafeRepository(db)
   const submissions = new SubmissionRepository(db)
 
