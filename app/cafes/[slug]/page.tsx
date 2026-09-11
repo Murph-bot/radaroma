@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import ConciergeChat from "@/components/ConciergeChat"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
 import { getPublicCafe } from "@/lib/queries/publicCafes"
 import { AXIS_LABELS } from "@/lib/radar"
@@ -122,6 +123,21 @@ export default async function CafeDetailPage({
           )}
         </div>
       </div>
+
+      <section>
+        <h2 className="mb-1 text-xl font-semibold text-stone-900">Ask about this café</h2>
+        <p className="mb-4 text-sm text-stone-500">
+          Questions about {cafe.name}? The concierge knows its profile.
+        </p>
+        <ConciergeChat
+          cafeContext={
+            score
+              ? `${cafe.name} (${cafe.neighborhood}, ${PRICE_TIER_LABEL[cafe.priceTier]} tier). Scores: Quality ${score.quality}/5, Value ${score.priceValue}/5, Work ${score.workFriendliness}/5, Quiet ${score.quietVibe}/5, Specialty ${score.specialtyDepth}/5.`
+              : `${cafe.name} (${cafe.neighborhood}, ${PRICE_TIER_LABEL[cafe.priceTier]} tier). No scores yet.`
+          }
+          placeholder={`Ask about ${cafe.name}…`}
+        />
+      </section>
     </div>
   )
 }

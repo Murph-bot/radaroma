@@ -1,5 +1,6 @@
 import Link from "next/link"
 import CafeExplorer from "@/components/CafeExplorer"
+import ConciergeChat from "@/components/ConciergeChat"
 import RankedCafeCard from "@/components/RankedCafeCard"
 import { getPublicCafes } from "@/lib/queries/publicCafes"
 
@@ -51,6 +52,14 @@ export default async function Home() {
             Know a great spot? Submit it
           </Link>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-2xl">
+        <h2 className="mb-1 text-xl font-semibold text-stone-900">Ask the concierge</h2>
+        <p className="mb-4 text-sm text-stone-500">
+          A real AI, grounded in our dataset. It can&apos;t recommend a café that isn&apos;t here.
+        </p>
+        <ConciergeChat />
       </section>
 
       <section>
