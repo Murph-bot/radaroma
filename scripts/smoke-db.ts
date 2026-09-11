@@ -1,23 +1,45 @@
-// Smoke test for the data layer against the REAL remote Supabase project.
-// Requires .env.local with Supabase vars. Creates + deletes its own rows.
+// Smoke test for the data layer against the LOCAL D1 database — the same
+// SQLite file `npm run preview` serves. Creates + deletes its own rows.
+// Prereq: `npm run db:migrate:local`
 // Run: npm run smoke:db
-import { loadEnvFile } from "node:process"
-import { createAdminClient, createAnonClient } from "../lib/db/client"
+import { existsSync, readdirSync, statSync } from "node:fs"
+import { join } from "node:path"
+import Database from "better-sqlite3"
+import { sqliteDb } from "../lib/db/sql"
 import { CafeRepository } from "../lib/db/repositories/cafes"
 import { SubmissionRepository } from "../lib/db/repositories/submissions"
 
-try {
-  loadEnvFile(".env.local")
-} catch {
-  // env vars may already be set in the shell
+// Find the actual D1 database file under .wrangler/state/v3/d1/ — the name
+// is a content hash, so we scan for *.sqlite files that aren't miniflare
+// metadata or WAL/SHM sidecars.
+function findLocalD1Db(): string {
+  const base = ".wrangler/state/v3/d1"
+  if (!existsSync(base)) return ""
+  const walk = (dir: string): string => {
+    for (const entry of readdirSync(dir)) {
+      const full = join(dir, entry)
+      if (statSync(full).isDirectory()) {
+        const found = walk(full)
+        if (found) return found
+      } else if (entry.endsWith(".sqlite") && entry !== "metadata.sqlite") {
+        return full
+      }
+    }
+    return ""
+  }
+  return walk(base)
 }
 
 async function main() {
-  const admin = createAdminClient()
-  const anon = createAnonClient()
-  const cafes = new CafeRepository(admin)
-  const anonCafes = new CafeRepository(anon)
-  const submissions = new SubmissionRepository(anon)
+  const dbFile = findLocalD1Db()
+  if (!dbFile) {
+    throw new Error(
+      "local D1 database not found — run `npm run db:migrate:local` first",
+    )
+  }
+  const db = sqliteDb(new Database(dbFile))
+  const cafes = new CafeRepository(db)
+  const submissions = new SubmissionRepository(db)
 
   const slug = `smoke-${Date.now()}`
   const created = await cafes.create({
@@ -33,38 +55,33 @@ async function main() {
     confidenceScore: null,
     verificationNotes: null,
   })
-  console.log("1. admin created draft cafe:", created.slug)
+  console.log("1. created draft cafe:", created.slug)
 
-  const anonDraft = await anonCafes.findBySlug(slug)
-  if (anonDraft) throw new Error("RLS LEAK: anon client saw a draft cafe")
-  console.log("2. anon client cannot see draft (RLS ok)")
+  const verifiedList = await cafes.findVerified()
+  if (verifiedList.some((c) => c.slug === slug)) {
+    throw new Error("VISIBILITY GAP: draft cafe leaked into findVerified()")
+  }
+  console.log("2. draft cafe not visible via the public read path")
 
   await cafes.markVerified(created.id)
-  const anonVerified = await anonCafes.findBySlug(slug)
-  if (!anonVerified) throw new Error("anon client could not read verified cafe")
-  console.log("3. anon client reads verified cafe (RLS ok)")
+  const bySlug = await cafes.findBySlug(slug)
+  if (!bySlug || bySlug.status !== "verified") {
+    throw new Error("markVerified did not make the cafe verified")
+  }
+  console.log("3. cafe verified and readable")
 
   const sub = await submissions.create({
     submittedName: "Smoke Test Submission",
     submittedLocation: "Athens",
-    submitterNote: "smoke",
   })
   if (sub.status !== "new") throw new Error(`expected status 'new', got ${sub.status}`)
-  console.log("4. public submission inserted via anon client, status:", sub.status)
+  console.log("4. public submission stored as status:", sub.status)
 
-  const forged = await anon
-    .from("submissions")
-    .insert({ submitted_name: "Forged", submitted_location: "Athens", status: "verified" })
-  if (!forged.error) {
-    throw new Error("RLS GAP: anon insert with status='verified' succeeded")
-  }
-  console.log("5. forged status insert rejected by RLS")
+  await db.run("delete from cafes where id = ?", [created.id])
+  await db.run("delete from submissions where id = ?", [sub.id])
+  console.log("5. cleanup done")
 
-  await admin.from("cafes").delete().eq("id", created.id)
-  await admin.from("submissions").delete().eq("id", sub.id)
-  console.log("6. cleanup done")
-
-  console.log("SMOKE DB OK — data layer verified against real Supabase")
+  console.log("SMOKE DB OK — data layer verified against local D1")
 }
 
 main().catch((err) => {

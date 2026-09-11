@@ -1,47 +1,40 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
+import { randomUUID } from "node:crypto"
 import {
   parseSubmissionRow,
   type Submission,
   type SubmissionInput,
   type SubmissionStatus,
 } from "@/lib/schemas/submission"
+import { nowIso, type SqlDb } from "@/lib/db/sql"
 
 export class SubmissionRepository {
-  constructor(private client: SupabaseClient) {}
+  constructor(private db: SqlDb) {}
 
-  // Public intake: anon client, RLS enforces status stays 'new'.
+  // Public intake. The server route hardcodes status='new'; the schema and
+  // this repository are the only writers, so a forged status is impossible.
   async create(input: SubmissionInput): Promise<Submission> {
-    const { data, error } = await this.client
-      .from("submissions")
-      .insert({
-        submitted_name: input.submittedName,
-        submitted_location: input.submittedLocation,
-        submitter_note: input.submitterNote || null,
-      })
-      .select()
-      .single()
-    if (error) throw new Error(`submissions.create: ${error.message}`)
-    return parseSubmissionRow(data)
+    const id = randomUUID()
+    await this.db.run(
+      `insert into submissions (id, submitted_name, submitted_location, submitter_note, status, created_at)
+       values (?, ?, ?, ?, 'new', ?)`,
+      [id, input.submittedName, input.submittedLocation, input.submitterNote || null, nowIso()],
+    )
+    const created = await this.findById(id)
+    if (!created) throw new Error("submissions.create: insert did not return a row")
+    return created
   }
 
   async findById(id: string): Promise<Submission | null> {
-    const { data, error } = await this.client
-      .from("submissions")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle()
-    if (error) throw new Error(`submissions.findById: ${error.message}`)
-    return data ? parseSubmissionRow(data) : null
+    const row = await this.db.get("select * from submissions where id = ?", [id])
+    return row ? parseSubmissionRow(row) : null
   }
 
   async findByStatus(status: SubmissionStatus): Promise<Submission[]> {
-    const { data, error } = await this.client
-      .from("submissions")
-      .select("*")
-      .eq("status", status)
-      .order("created_at", { ascending: false })
-    if (error) throw new Error(`submissions.findByStatus: ${error.message}`)
-    return (data ?? []).map(parseSubmissionRow)
+    const rows = await this.db.all(
+      "select * from submissions where status = ? order by created_at desc",
+      [status],
+    )
+    return rows.map(parseSubmissionRow)
   }
 
   async updateStatus(
@@ -49,26 +42,20 @@ export class SubmissionRepository {
     status: SubmissionStatus,
     promotedCafeId?: string,
   ): Promise<Submission> {
-    const { data, error } = await this.client
-      .from("submissions")
-      .update({
-        status,
-        ...(promotedCafeId !== undefined && { promoted_cafe_id: promotedCafeId }),
-      })
-      .eq("id", id)
-      .select()
-      .single()
-    if (error) throw new Error(`submissions.updateStatus: ${error.message}`)
-    return parseSubmissionRow(data)
+    await this.db.run(
+      `update submissions set status = ?, promoted_cafe_id = ? where id = ?`,
+      [status, promotedCafeId ?? null, id],
+    )
+    const updated = await this.findById(id)
+    if (!updated) throw new Error("submissions.updateStatus: row not found")
+    return updated
   }
 
   async listRecent(limit = 50): Promise<Submission[]> {
-    const { data, error } = await this.client
-      .from("submissions")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(limit)
-    if (error) throw new Error(`submissions.listRecent: ${error.message}`)
-    return (data ?? []).map(parseSubmissionRow)
+    const rows = await this.db.all(
+      "select * from submissions order by created_at desc limit ?",
+      [limit],
+    )
+    return rows.map(parseSubmissionRow)
   }
 }

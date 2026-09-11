@@ -1,71 +1,74 @@
-import { describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it } from "vitest"
 import { ScoreRepository } from "./scores"
-import { mockSupabase } from "./repo-test-utils"
+import { CafeRepository } from "./cafes"
+import { createTestDb } from "./test-db"
+import type { SqlDb } from "@/lib/db/sql"
 
-const scoreRow = (overrides: Record<string, unknown> = {}) => ({
-  cafe_id: "11111111-1111-4111-8111-111111111111",
-  scored_by: "curator",
+const CAFE_ID = "11111111-1111-4111-8111-111111111111"
+
+const scoreInput = {
   quality: 4,
-  price_value: 4,
-  work_friendliness: 3,
-  quiet_vibe: 4,
-  specialty_depth: 5,
-  ...overrides,
-})
+  priceValue: 4,
+  workFriendliness: 3,
+  quietVibe: 4,
+  specialtyDepth: 5,
+}
 
 describe("ScoreRepository", () => {
+  let db: SqlDb
+  let repo: ScoreRepository
+
+  beforeEach(async () => {
+    db = createTestDb()
+    repo = new ScoreRepository(db)
+    const cafes = new CafeRepository(db)
+    await cafes.create({
+      slug: "taf-coffee",
+      name: "Taf Coffee",
+      address: "Emmanouil Benaki 7, Athens",
+      lat: null,
+      lng: null,
+      neighborhood: null,
+      priceTier: 3,
+      source: "owner",
+      status: "verified",
+      confidenceScore: null,
+      verificationNotes: null,
+    })
+    await db.run("update cafes set id = ? where slug = 'taf-coffee'", [CAFE_ID])
+  })
+
+  it("findForCafe returns null when there is no curator score", async () => {
+    expect(await repo.findForCafe(CAFE_ID)).toBeNull()
+  })
+
+  it("upsertCurator creates and then updates the same row", async () => {
+    const created = await repo.upsertCurator(CAFE_ID, scoreInput)
+    expect(created.scoredBy).toBe("curator")
+    expect(created.quality).toBe(4)
+
+    const updated = await repo.upsertCurator(CAFE_ID, { ...scoreInput, quality: 5 })
+
+    expect(updated.quality).toBe(5)
+    const rows = await db.all("select * from cafe_scores where cafe_id = ?", [CAFE_ID])
+    expect(rows).toHaveLength(1)
+  })
+
   it("findForCafes returns a Map keyed by cafeId", async () => {
-    const { client, q, setResult } = mockSupabase()
-    const idA = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
-    const idB = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
-    setResult({
-      data: [
-        scoreRow({ cafe_id: idA, quality: 5 }),
-        scoreRow({ cafe_id: idB, quality: 3 }),
-      ],
-      error: null,
-    })
-    const repo = new ScoreRepository(client)
-
-    const scores = await repo.findForCafes([idA, idB])
-
-    expect(q.in).toHaveBeenCalledWith("cafe_id", [idA, idB])
-    expect(q.eq).toHaveBeenCalledWith("scored_by", "curator")
-    expect(scores.size).toBe(2)
-    expect(scores.get(idA)?.quality).toBe(5)
-  })
-
-  it("findForCafes returns an empty Map for no ids", async () => {
-    const { client } = mockSupabase()
-    const repo = new ScoreRepository(client)
-    const scores = await repo.findForCafes([])
-    expect(scores.size).toBe(0)
-  })
-
-  it("upsertCurator posts the right payload", async () => {
-    const { client, q, setResult } = mockSupabase()
-    setResult({ data: scoreRow(), error: null })
-    const repo = new ScoreRepository(client)
-
-    await repo.upsertCurator("11111111-1111-4111-8111-111111111111", {
-      quality: 4,
-      priceValue: 4,
-      workFriendliness: 3,
-      quietVibe: 4,
-      specialtyDepth: 5,
-    })
-
-    expect(q.upsert).toHaveBeenCalledWith(
-      {
-        cafe_id: "11111111-1111-4111-8111-111111111111",
-        scored_by: "curator",
-        quality: 4,
-        price_value: 4,
-        work_friendliness: 3,
-        quiet_vibe: 4,
-        specialty_depth: 5,
-      },
-      { onConflict: "cafe_id,scored_by" },
+    await repo.upsertCurator(CAFE_ID, scoreInput)
+    const otherId = "22222222-2222-4222-8222-222222222222"
+    await db.run(
+      `insert into cafes (id, slug, name, address, source, status)
+       values (?, 'other', 'Other', 'x', 'owner', 'verified')`,
+      [otherId],
     )
+    await repo.upsertCurator(otherId, { ...scoreInput, quality: 2 })
+
+    const scores = await repo.findForCafes([CAFE_ID, otherId])
+
+    expect(scores.size).toBe(2)
+    expect(scores.get(CAFE_ID)?.quality).toBe(4)
+    expect(scores.get(otherId)?.quality).toBe(2)
+    expect(await repo.findForCafes([])).toEqual(new Map())
   })
 })

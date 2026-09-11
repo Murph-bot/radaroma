@@ -1,8 +1,6 @@
 # Copy to `.dev.vars` for `npm run preview` (wrangler reads this file for local dev).
-# These mirror the server-only vars in `.env.local`; NEXT_PUBLIC_* vars are inlined
-# at build time and don't need to be here.
+# D1 needs no env vars (it arrives as the `DB` binding).
 
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 LLM_API_KEY=sk-or-...
 LLM_MODEL=openai/gpt-4o
 LLM_BASE_URL=https://openrouter.ai/api/v1

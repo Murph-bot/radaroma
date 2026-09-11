@@ -19,6 +19,37 @@ Everything else follows the spec. The user's explicit workflow requirement: **ve
 
 ## Deltas from spec (decisions + rationale)
 
+### UPDATE (Phase 1): Supabase → Cloudflare D1 (SQLite)
+
+Per user request ("make it with SQLite to not require a Supabase project"),
+the data layer moved from Supabase Postgres to **Cloudflare D1** — the
+SQLite database inside the Cloudflare account the user already has. No new
+signups; deploys with `wrangler deploy`.
+
+Consequences, decided up front:
+
+1. **No RLS.** D1 has no row-level security. The security boundary moved
+   into app code: repositories in `lib/db/repositories/` are the ONLY
+   database access path, public queries hard-filter `status='verified'`,
+   and submissions are always inserted as `'new'` by the server route.
+   Browsers never touch the DB directly. One less exposed surface, but the
+   repository layer is now the single enforcement point — keep it that way.
+2. **Auth changes.** Supabase magic links are gone. `/admin` is protected by
+   **Cloudflare Access** (email OTP, free tier, edge-level) configured once
+   in the dashboard, plus the `invited_emails` allowlist checked in app
+   code (Access passes the user's email as a header).
+3. **Migration dialect.** `migrations/0001_init.sql` is SQLite (TEXT uuids
+   generated in app code, ISO-8601 TEXT timestamps, REAL numerics). Applied
+   via `wrangler d1 migrations apply --local|--remote`.
+4. **Tests got stronger.** Repository tests run real SQLite in-memory
+   (better-sqlite3, devDependency) with the same migration SQL as prod.
+
+Local dev: `npm run db:migrate:local` seeds the local D1 state;
+`npm run smoke:db` proves the data layer against that real file;
+`/api/health/db` proves the Worker → D1 binding chain.
+
+
+
 ### Deploy: OpenNext on Cloudflare Workers (not Vercel, not Pages, not vinext)
 - Cloudflare Pages is legacy for Next.js (Edge runtime only, unsupported features). Rejected.
 - **vinext** is Cloudflare's new official default but is young. Rejected for now; re-evaluate as a drop-in at Phase 8.

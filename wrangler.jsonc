@@ -15,5 +15,15 @@
       "binding": "WORKER_SELF_REFERENCE",
       "service": "pour-compass"
     }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pour-compass",
+      // Placeholder until `wrangler d1 create pour-compass` at deploy time.
+      // Local dev and preview work with any UUID.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
   ]
 }

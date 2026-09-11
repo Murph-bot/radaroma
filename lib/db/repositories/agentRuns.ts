@@ -1,47 +1,54 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
+import { randomUUID } from "node:crypto"
 import {
   parseAgentRunRow,
   type AgentRun,
   type AgentRunInput,
 } from "@/lib/schemas/agentRun"
+import { nowIso, type SqlDb } from "@/lib/db/sql"
 
 export class AgentRunRepository {
-  constructor(private client: SupabaseClient) {}
+  constructor(private db: SqlDb) {}
 
   async create(input: AgentRunInput): Promise<AgentRun> {
-    const { data, error } = await this.client
-      .from("agent_runs")
-      .insert({
-        submission_id: input.submissionId ?? null,
-        mode: input.mode,
-        tool_calls: input.toolCalls ?? null,
-        confidence_score: input.confidenceScore ?? null,
-        decision: input.decision ?? null,
-        reasoning: input.reasoning ?? null,
-      })
-      .select()
-      .single()
-    if (error) throw new Error(`agentRuns.create: ${error.message}`)
-    return parseAgentRunRow(data)
+    const id = randomUUID()
+    await this.db.run(
+      `insert into agent_runs (
+        id, submission_id, mode, tool_calls, confidence_score, decision, reasoning, created_at
+      ) values (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.submissionId ?? null,
+        input.mode,
+        input.toolCalls !== undefined ? JSON.stringify(input.toolCalls) : null,
+        input.confidenceScore ?? null,
+        input.decision ?? null,
+        input.reasoning ?? null,
+        nowIso(),
+      ],
+    )
+    const created = await this.findById(id)
+    if (!created) throw new Error("agentRuns.create: insert did not return a row")
+    return created
+  }
+
+  async findById(id: string): Promise<AgentRun | null> {
+    const row = await this.db.get("select * from agent_runs where id = ?", [id])
+    return row ? parseAgentRunRow(row) : null
   }
 
   async findBySubmission(submissionId: string): Promise<AgentRun[]> {
-    const { data, error } = await this.client
-      .from("agent_runs")
-      .select("*")
-      .eq("submission_id", submissionId)
-      .order("created_at", { ascending: false })
-    if (error) throw new Error(`agentRuns.findBySubmission: ${error.message}`)
-    return (data ?? []).map(parseAgentRunRow)
+    const rows = await this.db.all(
+      "select * from agent_runs where submission_id = ? order by created_at desc",
+      [submissionId],
+    )
+    return rows.map(parseAgentRunRow)
   }
 
   async listRecent(limit = 50): Promise<AgentRun[]> {
-    const { data, error } = await this.client
-      .from("agent_runs")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(limit)
-    if (error) throw new Error(`agentRuns.listRecent: ${error.message}`)
-    return (data ?? []).map(parseAgentRunRow)
+    const rows = await this.db.all(
+      "select * from agent_runs order by created_at desc limit ?",
+      [limit],
+    )
+    return rows.map(parseAgentRunRow)
   }
 }

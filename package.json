@@ -13,7 +13,9 @@
     "preview": "opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare deploy",
     "seed": "tsx scripts/seed-cafes.ts",
-    "smoke:db": "tsx scripts/smoke-db.ts"
+    "smoke:db": "tsx scripts/smoke-db.ts",
+    "db:migrate:local": "wrangler d1 migrations apply pour-compass --local",
+    "db:migrate:remote": "wrangler d1 migrations apply pour-compass --remote"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -27,9 +29,11 @@
   "devDependencies": {
     "@opennextjs/cloudflare": "1.20.6",
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^24.13.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "better-sqlite3": "^13.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",

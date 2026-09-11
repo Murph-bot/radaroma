@@ -24,7 +24,7 @@ export type Submission = z.infer<typeof SubmissionSchema>
 export const SubmissionInputSchema = z.object({
   submittedName: z.string().trim().min(1).max(120),
   submittedLocation: z.string().trim().min(1).max(500),
-  submitterNote: z.string().trim().max(1000).optional().default(""),
+  submitterNote: z.string().trim().max(1000).optional(),
 })
 export type SubmissionInput = z.infer<typeof SubmissionInputSchema>
 
