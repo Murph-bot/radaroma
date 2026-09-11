@@ -17,6 +17,7 @@ export const SubmissionSchema = z.object({
   submitterNote: z.string().nullable(),
   status: z.enum(SUBMISSION_STATUSES),
   promotedCafeId: z.string().uuid().nullable(),
+  createdAt: z.string(),
 })
 export type Submission = z.infer<typeof SubmissionSchema>
 
@@ -36,6 +37,7 @@ export const SubmissionRowSchema = z
     submitter_note: z.string().nullable(),
     status: z.enum(SUBMISSION_STATUSES),
     promoted_cafe_id: z.string().uuid().nullable(),
+    created_at: z.string(),
   })
   .transform(
     (r): Submission => ({
@@ -45,6 +47,7 @@ export const SubmissionRowSchema = z
       submitterNote: r.submitter_note,
       status: r.status,
       promotedCafeId: r.promoted_cafe_id,
+      createdAt: r.created_at,
     }),
   )
 

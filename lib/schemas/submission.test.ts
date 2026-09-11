@@ -41,6 +41,7 @@ describe("parseSubmissionRow", () => {
       submitter_note: null,
       status: "new",
       promoted_cafe_id: null,
+      created_at: "2026-09-12T00:00:00.000Z",
     })
     expect(sub).toEqual({
       id: "11111111-1111-4111-8111-111111111111",
@@ -49,6 +50,7 @@ describe("parseSubmissionRow", () => {
       submitterNote: null,
       status: "new",
       promotedCafeId: null,
+      createdAt: "2026-09-12T00:00:00.000Z",
     })
   })
 

@@ -26,6 +26,8 @@ describe("AgentRunRepository", () => {
     expect(run.confidenceScore).toBe(0.8)
     expect(run.decision).toBe("auto_verified")
     expect(run.submissionId).toBeNull()
+    // tool_calls is stored as JSON text and parsed back to an array
+    expect(run.toolCalls).toEqual([{ tool: "searchWeb", result: "ok" }])
   })
 
   it("findBySubmission and listRecent work", async () => {

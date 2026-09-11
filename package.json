@@ -14,6 +14,7 @@
     "deploy": "opennextjs-cloudflare deploy",
     "seed": "tsx scripts/seed-cafes.ts",
     "smoke:db": "tsx scripts/smoke-db.ts",
+    "invite": "tsx scripts/invite-admin.ts",
     "db:migrate:local": "wrangler d1 migrations apply pour-compass --local",
     "db:migrate:remote": "wrangler d1 migrations apply pour-compass --remote"
   },

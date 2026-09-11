@@ -22,6 +22,7 @@ export const AgentRunSchema = z.object({
   confidenceScore: z.number().min(0).max(1).nullable(),
   decision: z.enum(AGENT_DECISIONS).nullable(),
   reasoning: z.string().nullable(),
+  createdAt: z.string(),
 })
 export type AgentRun = z.infer<typeof AgentRunSchema>
 
@@ -36,6 +37,14 @@ export const AgentRunInputSchema = z.object({
 })
 export type AgentRunInput = z.infer<typeof AgentRunInputSchema>
 
+const safeParseJson = (text: string): unknown => {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
 export const AgentRunRowSchema = z
   .object({
     id: z.string().uuid(),
@@ -45,16 +54,20 @@ export const AgentRunRowSchema = z
     confidence_score: z.number().min(0).max(1).nullable(),
     decision: z.enum(AGENT_DECISIONS).nullable(),
     reasoning: z.string().nullable(),
+    created_at: z.string(),
   })
   .transform(
     (r): AgentRun => ({
       id: r.id,
       submissionId: r.submission_id,
       mode: r.mode,
-      toolCalls: r.tool_calls,
+      // tool_calls is stored as a JSON string in D1
+      toolCalls:
+        typeof r.tool_calls === "string" ? safeParseJson(r.tool_calls) : r.tool_calls,
       confidenceScore: r.confidence_score,
       decision: r.decision,
       reasoning: r.reasoning,
+      createdAt: r.created_at,
     }),
   )
 
