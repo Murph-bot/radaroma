@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf6f0; /* soft cream */
+  --foreground: #463523; /* deep espresso */
 }
 
 @theme inline {
@@ -10,13 +10,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Soft coffee palette */
+  --color-coffee-50: #faf6f0;
+  --color-coffee-100: #f3ebe0;
+  --color-coffee-200: #e6d7c3;
+  --color-coffee-300: #d3bca0;
+  --color-coffee-400: #b99a77;
+  --color-coffee-500: #a07f5f;
+  --color-coffee-600: #86684c;
+  --color-coffee-700: #6e543e;
+  --color-coffee-800: #58432f;
+  --color-coffee-900: #463523;
 }
 
 body {

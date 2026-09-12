@@ -72,24 +72,24 @@ export default function SubmitForm() {
 
   if (state.phase === "flagged" || state.phase === "rejected") {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center">
-        <p className="text-lg font-semibold text-amber-900">
+      <div className="rounded-xl border border-coffee-200 bg-white p-6 text-center">
+        <p className="text-lg font-semibold text-coffee-900">
           {state.phase === "flagged" ? "Sent for human review" : "Not added this time"}
         </p>
-        <p className="mt-1 text-sm text-amber-800">
+        <p className="mt-1 text-sm text-coffee-800">
           {state.phase === "flagged"
             ? "The concierge couldn't fully confirm this café (or it may duplicate one we already have). A curator will take a look."
             : "The concierge could not confirm this café exists. If it's real, double-check the name and address and try again."}
         </p>
         {state.reasoning && (
-          <p className="mx-auto mt-3 max-w-md rounded-lg bg-white/70 p-3 text-xs text-amber-800">
+          <p className="mx-auto mt-3 max-w-md rounded-lg bg-white/70 p-3 text-xs text-coffee-800">
             {state.reasoning}
           </p>
         )}
         <button
           type="button"
           onClick={() => setState({ phase: "idle" })}
-          className="mt-4 rounded-lg border border-amber-300 px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100"
+          className="mt-4 rounded-lg border border-coffee-300 px-4 py-2 text-sm font-medium text-coffee-900 hover:bg-coffee-100"
         >
           Submit another café
         </button>
@@ -100,7 +100,7 @@ export default function SubmitForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="cafe-name" className="mb-1 block text-sm font-medium text-stone-700">
+        <label htmlFor="cafe-name" className="mb-1 block text-sm font-medium text-coffee-700">
           Café name
         </label>
         <input
@@ -111,11 +111,11 @@ export default function SubmitForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Kaya"
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-700"
+          className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>
       <div>
-        <label htmlFor="cafe-location" className="mb-1 block text-sm font-medium text-stone-700">
+        <label htmlFor="cafe-location" className="mb-1 block text-sm font-medium text-coffee-700">
           Address or Google Maps link
         </label>
         <input
@@ -126,12 +126,12 @@ export default function SubmitForm() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="e.g. Voulis 7, Athens 105 62"
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-700"
+          className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>
       <div>
-        <label htmlFor="cafe-note" className="mb-1 block text-sm font-medium text-stone-700">
-          Anything the concierge should know? <span className="text-stone-400">(optional)</span>
+        <label htmlFor="cafe-note" className="mb-1 block text-sm font-medium text-coffee-700">
+          Anything the concierge should know? <span className="text-coffee-400">(optional)</span>
         </label>
         <textarea
           id="cafe-note"
@@ -140,7 +140,7 @@ export default function SubmitForm() {
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Great filter coffee, nice courtyard…"
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-700"
+          className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>
       {/* honeypot — hidden from humans, irresistible to bots */}
@@ -165,12 +165,12 @@ export default function SubmitForm() {
       <button
         type="submit"
         disabled={state.phase === "submitting" || name.trim().length === 0 || location.trim().length === 0}
-        className="w-full rounded-lg bg-amber-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-900 disabled:opacity-50"
+        className="w-full rounded-lg bg-coffee-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-coffee-900 disabled:opacity-50"
       >
         {state.phase === "submitting" ? "Verifying with the concierge…" : "Submit for verification"}
       </button>
       {state.phase === "submitting" && (
-        <p className="text-center text-xs text-stone-400">
+        <p className="text-center text-xs text-coffee-400">
           The concierge checks the web, looks for duplicates, and drafts a record. Usually 10–30
           seconds — keep this tab open.
         </p>

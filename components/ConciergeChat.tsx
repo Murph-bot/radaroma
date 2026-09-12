@@ -53,13 +53,13 @@ export default function ConciergeChat({
   }
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white">
-      <div className="flex items-center gap-2 border-b border-stone-200 bg-stone-50 px-4 py-2.5">
+    <div className="flex flex-col overflow-hidden rounded-xl border border-coffee-200 bg-white">
+      <div className="flex items-center gap-2 border-b border-coffee-200 bg-coffee-50 px-4 py-2.5">
         <span aria-hidden="true" className="text-lg">
           ☕
         </span>
-        <span className="text-sm font-semibold text-stone-800">Café Concierge</span>
-        <span className="ml-auto text-[11px] text-stone-400">
+        <span className="text-sm font-semibold text-coffee-800">Café Concierge</span>
+        <span className="ml-auto text-[11px] text-coffee-400">
           only recommends cafés in our dataset
         </span>
       </div>
@@ -70,7 +70,7 @@ export default function ConciergeChat({
         className="max-h-72 min-h-24 space-y-3 overflow-y-auto px-4 py-3"
       >
         {messages.length === 0 && (
-          <p className="text-sm text-stone-400">
+          <p className="text-sm text-coffee-400">
             Ask about the best espresso, a quiet corner to work from, or which café fits your
             budget.
           </p>
@@ -80,15 +80,15 @@ export default function ConciergeChat({
             key={i}
             className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
               m.role === "user"
-                ? "ml-auto bg-amber-800 text-white"
-                : "bg-stone-100 text-stone-800"
+                ? "ml-auto bg-coffee-800 text-white"
+                : "bg-coffee-100 text-coffee-800"
             }`}
           >
             {m.content}
           </div>
         ))}
         {busy && (
-          <div className="max-w-[85%] rounded-lg bg-stone-100 px-3 py-2 text-sm text-stone-500">
+          <div className="max-w-[85%] rounded-lg bg-coffee-100 px-3 py-2 text-sm text-coffee-500">
             Thinking…
           </div>
         )}
@@ -100,7 +100,7 @@ export default function ConciergeChat({
       </div>
 
       <form
-        className="flex items-center gap-2 border-t border-stone-200 p-3"
+        className="flex items-center gap-2 border-t border-coffee-200 p-3"
         onSubmit={(e) => {
           e.preventDefault()
           void handleSend()
@@ -116,12 +116,12 @@ export default function ConciergeChat({
           onChange={(e) => setInput(e.target.value)}
           placeholder={placeholder}
           disabled={busy}
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-700 disabled:opacity-60"
+          className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700 disabled:opacity-60"
         />
         <button
           type="submit"
           disabled={busy || input.trim().length === 0}
-          className="shrink-0 rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-900 disabled:opacity-40"
+          className="shrink-0 rounded-lg bg-coffee-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-coffee-900 disabled:opacity-40"
         >
           Send
         </button>

@@ -15,7 +15,9 @@ const CENTER = VIEWBOX / 2
 const RADIUS = 68
 const LABEL_OFFSET = 16
 
-export const SERIES_COLORS = ["#b45309", "#1d4ed8", "#15803d", "#7c3aed"]
+// Soft coffee-family palette (espresso, caramel, sage, muted lavender) —
+// distinguishable in compare mode, gentle on the eyes.
+export const SERIES_COLORS = ["#7a5c43", "#b08968", "#8a9a7b", "#9b8cb8"]
 
 export interface RadarSeries {
   id: string
@@ -93,7 +95,7 @@ export default function RadarChart({
             y={CENTER + (p.y - CENTER) * ((RADIUS + LABEL_OFFSET) / RADIUS)}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-stone-500 text-[10px] font-medium"
+            className="fill-coffee-500 text-[10px] font-medium"
           >
             {AXIS_LABELS[axes[i]]}
           </text>
@@ -116,7 +118,7 @@ export default function RadarChart({
       {showLegend && series.length > 1 && (
         <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
           {series.map((s) => (
-            <span key={s.id} className="flex items-center gap-1.5 text-xs text-stone-700">
+            <span key={s.id} className="flex items-center gap-1.5 text-xs text-coffee-700">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-sm"
                 style={{ backgroundColor: s.color }}

@@ -9,14 +9,14 @@ export default function RootError({
 }) {
   return (
     <div className="mx-auto max-w-xl pt-16 text-center">
-      <h1 className="text-2xl font-bold text-stone-900">Something went wrong</h1>
-      <p className="mt-3 text-sm text-stone-600">
+      <h1 className="text-2xl font-bold text-coffee-900">Something went wrong</h1>
+      <p className="mt-3 text-sm text-coffee-600">
         {error.message || "An unexpected error occurred."}
       </p>
       <button
         type="button"
         onClick={reset}
-        className="mt-6 rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white hover:bg-amber-900"
+        className="mt-6 rounded-lg bg-coffee-800 px-4 py-2 text-sm font-medium text-white hover:bg-coffee-900"
       >
         Try again
       </button>

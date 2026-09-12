@@ -38,7 +38,7 @@ function ScoreEditor({
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
       {SCORE_AXES.map((axis: ScoreAxis) => (
-        <label key={axis} className="block text-xs text-stone-600">
+        <label key={axis} className="block text-xs text-coffee-600">
           {AXIS_LABELS[axis]}
           <input
             type="number"
@@ -47,7 +47,7 @@ function ScoreEditor({
             step={1}
             value={scores[axis]}
             onChange={(e) => onChange({ ...scores, [axis]: Number(e.target.value) })}
-            className="mt-0.5 w-full rounded border border-stone-300 px-2 py-1 text-sm"
+            className="mt-0.5 w-full rounded border border-coffee-300 px-2 py-1 text-sm"
           />
         </label>
       ))}
@@ -142,38 +142,38 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
       )}
 
       <section>
-        <h2 className="text-lg font-semibold text-stone-900">
+        <h2 className="text-lg font-semibold text-coffee-900">
           Flagged submissions ({data.flagged.length})
         </h2>
         {data.flagged.length === 0 ? (
-          <p className="mt-2 rounded-lg border border-dashed border-stone-300 p-6 text-sm text-stone-400">
+          <p className="mt-2 rounded-lg border border-dashed border-coffee-300 p-6 text-sm text-coffee-400">
             Nothing waiting. New submissions that can&apos;t be auto-verified land here.
           </p>
         ) : (
           <div className="mt-3 space-y-4">
             {data.flagged.map(({ submission, draft, reasoning }) => (
-              <div key={submission.id} className="rounded-xl border border-stone-200 p-4">
+              <div key={submission.id} className="rounded-xl border border-coffee-200 bg-white p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="font-semibold text-stone-900">{submission.submittedName}</h3>
-                  <span className="text-xs text-stone-400">
+                  <h3 className="font-semibold text-coffee-900">{submission.submittedName}</h3>
+                  <span className="text-xs text-coffee-400">
                     {new Date(submission.createdAt).toLocaleString()}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-stone-600">{submission.submittedLocation}</p>
+                <p className="mt-1 text-sm text-coffee-600">{submission.submittedLocation}</p>
                 {submission.submitterNote && (
-                  <p className="mt-1 text-xs text-stone-400">“{submission.submitterNote}”</p>
+                  <p className="mt-1 text-xs text-coffee-400">“{submission.submitterNote}”</p>
                 )}
                 {reasoning && (
-                  <p className="mt-2 rounded-lg bg-stone-50 p-2 text-xs text-stone-600">
+                  <p className="mt-2 rounded-lg bg-coffee-50 p-2 text-xs text-coffee-600">
                     {reasoning}
                   </p>
                 )}
                 {draft ? (
                   <div className="mt-3">
-                    <p className="text-xs text-stone-500">
+                    <p className="text-xs text-coffee-500">
                       Agent draft: {draft.name} · {draft.neighborhood ?? "?"} · tier {draft.priceTier}
                     </p>
-                    <p className="mb-2 mt-1 text-[11px] text-stone-400">
+                    <p className="mb-2 mt-1 text-[11px] text-coffee-400">
                       Adjust scores if needed before approving.
                     </p>
                     <ScoreEditor
@@ -184,7 +184,7 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
                     />
                   </div>
                 ) : (
-                  <p className="mt-2 text-xs text-amber-700">
+                  <p className="mt-2 text-xs text-coffee-700">
                     No draft record — reject or use curator assist.
                   </p>
                 )}
@@ -209,7 +209,7 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
                     type="button"
                     disabled={busyId === submission.id}
                     onClick={() => handleAction(submission.id, "reject")}
-                    className="rounded-lg border border-stone-300 px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-100 disabled:opacity-50"
+                    className="rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-600 hover:bg-coffee-100 disabled:opacity-50"
                   >
                     Reject
                   </button>
@@ -221,8 +221,8 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-stone-900">Curator assist</h2>
-        <p className="mt-1 text-sm text-stone-500">
+        <h2 className="text-lg font-semibold text-coffee-900">Curator assist</h2>
+        <p className="mt-1 text-sm text-coffee-500">
           Paste notes or a link — the agent drafts a complete record.
         </p>
         <textarea
@@ -230,24 +230,24 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="e.g. https://… new specialty place in Kypseli, great filter, quiet courtyard"
-          className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-amber-700"
+          className="mt-2 w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
         <button
           type="button"
           disabled={drafting || notes.trim().length === 0}
           onClick={handleDraft}
-          className="mt-2 rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white hover:bg-amber-900 disabled:opacity-50"
+          className="mt-2 rounded-lg bg-coffee-800 px-4 py-2 text-sm font-medium text-white hover:bg-coffee-900 disabled:opacity-50"
         >
           {drafting ? "Drafting…" : "Draft record"}
         </button>
         {draft && (
-          <div className="mt-3 rounded-xl border border-stone-200 p-4">
-            <p className="text-sm font-semibold text-stone-900">{draft.record.name}</p>
-            <p className="text-xs text-stone-500">
+          <div className="mt-3 rounded-xl border border-coffee-200 p-4">
+            <p className="text-sm font-semibold text-coffee-900">{draft.record.name}</p>
+            <p className="text-xs text-coffee-500">
               {draft.record.address} · {draft.record.neighborhood ?? "?"} · tier{" "}
               {draft.record.priceTier}
             </p>
-            <p className="mt-1 text-xs text-stone-500">{draft.content}</p>
+            <p className="mt-1 text-xs text-coffee-500">{draft.content}</p>
             <div className="mt-3">
               <ScoreEditor scores={draftScores} onChange={setDraftScores} />
             </div>
@@ -264,19 +264,19 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-stone-900">Café scores</h2>
+        <h2 className="text-lg font-semibold text-coffee-900">Café scores</h2>
         <div className="mt-3 space-y-3">
           {data.cafes.map(({ cafe, score }) => {
             const current = cafeScores[cafe.id] ?? scoresFromCafeScore(score)
             return (
-              <div key={cafe.id} className="rounded-xl border border-stone-200 p-4">
+              <div key={cafe.id} className="rounded-xl border border-coffee-200 bg-white p-4">
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-semibold text-stone-900">
-                    <Link href={`/cafes/${cafe.slug}`} className="hover:text-amber-800">
+                  <h3 className="font-semibold text-coffee-900">
+                    <Link href={`/cafes/${cafe.slug}`} className="hover:text-coffee-800">
                       {cafe.name}
                     </Link>
                   </h3>
-                  <span className="text-xs text-stone-400">{cafe.neighborhood}</span>
+                  <span className="text-xs text-coffee-400">{cafe.neighborhood}</span>
                 </div>
                 <div className="mt-2">
                   <ScoreEditor
@@ -287,7 +287,7 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
                 <button
                   type="button"
                   onClick={() => handleSaveScores(cafe.id)}
-                  className="mt-2 rounded-lg border border-stone-300 px-3 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-100"
+                  className="mt-2 rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-600 hover:bg-coffee-100"
                 >
                   Save scores
                 </button>
@@ -298,10 +298,10 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-stone-900">Agent runs</h2>
-        <div className="mt-3 overflow-x-auto rounded-xl border border-stone-200">
+        <h2 className="text-lg font-semibold text-coffee-900">Agent runs</h2>
+        <div className="mt-3 overflow-x-auto rounded-xl border border-coffee-200 bg-white">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-stone-500">
+            <thead className="border-b border-coffee-200 bg-coffee-50 text-xs uppercase tracking-wide text-coffee-500">
               <tr>
                 <th className="px-3 py-2">Time</th>
                 <th className="px-3 py-2">Mode</th>
@@ -312,18 +312,18 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
             </thead>
             <tbody>
               {data.runs.map((run) => (
-                <tr key={run.id} className="border-b border-stone-100">
-                  <td className="whitespace-nowrap px-3 py-2 text-xs text-stone-400">
+                <tr key={run.id} className="border-b border-coffee-100">
+                  <td className="whitespace-nowrap px-3 py-2 text-xs text-coffee-400">
                     {new Date(run.createdAt).toLocaleString()}
                   </td>
                   <td className="px-3 py-2 font-mono text-xs">{run.mode}</td>
                   <td className="px-3 py-2 text-xs">
-                    {run.decision ?? <span className="text-stone-300">—</span>}
+                    {run.decision ?? <span className="text-coffee-300">—</span>}
                   </td>
                   <td className="px-3 py-2 text-xs">
                     {run.confidenceScore !== null ? run.confidenceScore.toFixed(2) : "—"}
                   </td>
-                  <td className="max-w-md truncate px-3 py-2 text-xs text-stone-500">
+                  <td className="max-w-md truncate px-3 py-2 text-xs text-coffee-500">
                     {run.reasoning ?? "—"}
                   </td>
                 </tr>

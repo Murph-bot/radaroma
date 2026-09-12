@@ -40,15 +40,15 @@ export default async function CafeDetailPage({
 
   return (
     <div className="space-y-8">
-      <Link href="/cafes" className="text-sm font-medium text-stone-500 hover:text-amber-800">
+      <Link href="/cafes" className="text-sm font-medium text-coffee-500 hover:text-coffee-800">
         ← All cafés
       </Link>
 
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight text-stone-900">{cafe.name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-coffee-900">{cafe.name}</h1>
           {rankScore !== null && (
-            <span className="rounded-full bg-amber-100 px-2.5 py-1 text-sm font-semibold text-amber-900">
+            <span className="rounded-full bg-coffee-100 px-2.5 py-1 text-sm font-semibold text-coffee-900">
               {rankScore.toFixed(1)} / 5
             </span>
           )}
@@ -58,15 +58,15 @@ export default async function CafeDetailPage({
             </span>
           )}
         </div>
-        <p className="text-stone-600">
+        <p className="text-coffee-600">
           {cafe.neighborhood} · {PRICE_TIER_LABEL[cafe.priceTier]}
         </p>
-        <p className="text-sm text-stone-500">{cafe.address}</p>
+        <p className="text-sm text-coffee-500">{cafe.address}</p>
       </header>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {score ? (
-          <div className="flex justify-center rounded-xl border border-stone-200 bg-stone-50 p-6">
+          <div className="flex justify-center rounded-xl border border-coffee-200 bg-white p-6">
             <RadarChart
               series={[
                 {
@@ -83,17 +83,17 @@ export default async function CafeDetailPage({
                 },
               ]}
               size={280}
-              className="text-stone-800"
+              className="text-coffee-800"
             />
           </div>
         ) : (
-          <div className="flex items-center justify-center rounded-xl border border-dashed border-stone-300 p-10 text-sm text-stone-400">
+          <div className="flex items-center justify-center rounded-xl border border-dashed border-coffee-300 p-10 text-sm text-coffee-400">
             No scores yet — coming soon.
           </div>
         )}
 
         <div className="space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-500">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-coffee-500">
             Score breakdown
           </h2>
           {score ? (
@@ -101,32 +101,32 @@ export default async function CafeDetailPage({
               {SCORE_AXES.map((axis: ScoreAxis) => (
                 <div key={axis}>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-stone-700">{AXIS_LABELS[axis]}</span>
-                    <span className="font-mono text-stone-500">{score[axis]} / 5</span>
+                    <span className="text-coffee-700">{AXIS_LABELS[axis]}</span>
+                    <span className="font-mono text-coffee-500">{score[axis]} / 5</span>
                   </div>
-                  <div className="mt-1 h-2 overflow-hidden rounded-full bg-stone-100">
+                  <div className="mt-1 h-2 overflow-hidden rounded-full bg-coffee-100">
                     <div
-                      className="h-full rounded-full bg-amber-700"
+                      className="h-full rounded-full bg-coffee-700"
                       style={{ width: `${(score[axis] / 5) * 100}%` }}
                     />
                   </div>
                 </div>
               ))}
               {cafe.verificationNotes && (
-                <p className="rounded-lg bg-stone-50 p-3 text-xs text-stone-500">
+                <p className="rounded-lg bg-coffee-100 p-3 text-xs text-coffee-600">
                   {cafe.verificationNotes}
                 </p>
               )}
             </div>
           ) : (
-            <p className="text-sm text-stone-500">Not scored yet.</p>
+            <p className="text-sm text-coffee-500">Not scored yet.</p>
           )}
         </div>
       </div>
 
       <section>
-        <h2 className="mb-1 text-xl font-semibold text-stone-900">Ask about this café</h2>
-        <p className="mb-4 text-sm text-stone-500">
+        <h2 className="mb-1 text-xl font-semibold text-coffee-900">Ask about this café</h2>
+        <p className="mb-4 text-sm text-coffee-500">
           Questions about {cafe.name}? The concierge knows its profile.
         </p>
         <ConciergeChat

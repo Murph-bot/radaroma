@@ -43,7 +43,7 @@ const navLinks = [
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-white text-stone-900">
+      <body className="flex min-h-full flex-col bg-coffee-50 text-coffee-900">
         {process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN && (
           <script
             defer
@@ -51,18 +51,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             data-cf-beacon={`{"token": "${process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN}"}`}
           />
         )}
-        <header className="border-b border-stone-200">
+        <header className="border-b border-coffee-200">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="text-lg font-bold tracking-tight text-amber-900">Pour Compass</span>
-              <span className="text-xs text-stone-400">Athens</span>
+              <span className="text-lg font-bold tracking-tight text-coffee-900">Pour Compass</span>
+              <span className="text-xs text-coffee-400">Athens</span>
             </Link>
             <nav className="flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="rounded-md px-3 py-1.5 text-sm font-medium text-stone-600 transition hover:bg-stone-100 hover:text-stone-900"
+                  className="rounded-md px-3 py-1.5 text-sm font-medium text-coffee-600 transition hover:bg-coffee-100 hover:text-coffee-900"
                 >
                   {link.label}
                 </Link>
@@ -71,8 +71,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
-        <footer className="border-t border-stone-200 py-6">
-          <div className="mx-auto w-full max-w-5xl px-4 text-xs text-stone-400">
+        <footer className="border-t border-coffee-200 py-6">
+          <div className="mx-auto w-full max-w-5xl px-4 text-xs text-coffee-400">
             Pour Compass — a curated, weighted comparison of Athens cafés. Scores are opinions;
             go taste for yourself.
           </div>

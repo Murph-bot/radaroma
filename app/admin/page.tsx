@@ -18,14 +18,14 @@ export default async function AdminPage() {
   if (!session) {
     return (
       <div className="mx-auto max-w-xl pt-10 text-center">
-        <h1 className="text-2xl font-bold text-stone-900">Admin</h1>
-        <p className="mt-3 text-sm text-stone-600">
+        <h1 className="text-2xl font-bold text-coffee-900">Admin</h1>
+        <p className="mt-3 text-sm text-coffee-600">
           This area is locked. Sign in through Cloudflare Access (email OTP) and make sure your
-          email is in the <code className="rounded bg-stone-100 px-1">invited_emails</code>{" "}
+          email is in the <code className="rounded bg-coffee-100 px-1">invited_emails</code>{" "}
           allowlist.
         </p>
-        <p className="mt-2 text-xs text-stone-400">
-          Local development: set <code className="rounded bg-stone-100 px-1">ADMIN_EMAIL</code> in
+        <p className="mt-2 text-xs text-coffee-400">
+          Local development: set <code className="rounded bg-coffee-100 px-1">ADMIN_EMAIL</code> in
           .env.local / .dev.vars.
         </p>
       </div>
@@ -36,8 +36,8 @@ export default async function AdminPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-baseline justify-between">
-        <h1 className="text-2xl font-bold text-stone-900">Admin</h1>
-        <span className="text-xs text-stone-400">signed in as {session.email}</span>
+        <h1 className="text-2xl font-bold text-coffee-900">Admin</h1>
+        <span className="text-xs text-coffee-400">signed in as {session.email}</span>
       </div>
       <AdminDashboard data={data} />
     </div>
