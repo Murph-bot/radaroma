@@ -2,6 +2,16 @@
 
 Curated café comparison app for Athens. Build brief: `pour-compass-spec.md`.
 Megaplan (phase order + verification gates): `docs/megaplan.md`.
+Deploy guide (secrets, Access, domain): `docs/deploy.md`.
+Production: https://pour-compass.sotirios-k-goulas.workers.dev (live since 2026-09-12).
+
+## Known state
+
+- LLM live E2E not yet run: user adds the OpenRouter key to `.env.local` + `.dev.vars`
+  (local) and `wrangler secret put LLM_API_KEY` (prod); then run the live concierge +
+  verify tests. Everything else is mock-tested (FakeLlm).
+- Admin on prod needs Cloudflare Access setup (docs/deploy.md) + an `invited_emails` row.
+- Seed scores in `data/seed/cafes.athens.json` are drafts awaiting user review.
 
 ## Commands
 
