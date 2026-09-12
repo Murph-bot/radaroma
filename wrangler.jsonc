@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
-  "name": "pour-compass",
+  "name": "radaroma",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -13,14 +13,14 @@
       // Self-reference service binding, the service name must match the worker name
       // see https://opennext.js.org/cloudflare/caching
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "pour-compass"
+      "service": "radaroma"
     }
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "pour-compass",
-      "database_id": "d8dc40f7-6463-41bf-a3e0-f4ee49344a96",
+      "database_name": "radaroma",
+      "database_id": "70e307ff-9008-4ac1-83f6-1bdadca797ab",
       "migrations_dir": "migrations"
     }
   ]

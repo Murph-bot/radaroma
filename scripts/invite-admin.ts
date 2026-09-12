@@ -1,6 +1,6 @@
 // Add an email to the invited_emails allowlist (local D1).
 // Remote: run the equivalent SQL via the dashboard or
-//   wrangler d1 execute pour-compass --remote --command "insert ..."
+//   wrangler d1 execute radaroma --remote --command "insert ..."
 // Usage: npm run invite -- you@example.com
 import { openLocalD1 } from "./local-d1"
 

@@ -1,8 +1,8 @@
-# Deploy guide — Pour Compass on Cloudflare Workers
+# Deploy guide — Radaroma on Cloudflare Workers
 
 ## One-time setup (done)
 
-- D1 database `pour-compass` created (`wrangler d1 create`) — id in `wrangler.jsonc`
+- D1 database `radaroma` created (`wrangler d1 create`) — id in `wrangler.jsonc`
 - Remote migrations applied (`npm run db:migrate:remote`)
 - Wrangler authenticated (OAuth, `wrangler whoami`)
 
@@ -25,7 +25,7 @@ Public env (inlined at build time, set when building): `NEXT_PUBLIC_CF_ANALYTICS
 
 ## Custom domain (Cloudflare dashboard, ~2 min)
 
-1. Workers & Pages → your worker (`pour-compass`) → Settings → Domains & Routes → Add custom domain.
+1. Workers & Pages → your worker (`radaroma`) → Settings → Domains & Routes → Add custom domain.
 2. Pick the root domain (dedicated product domain like `pourcompass.com`) or a subdomain
    (`pour.example.com`) — Cloudflare auto-creates the DNS record since the zone is in the same account.
 3. HTTPS is automatic.
@@ -39,7 +39,7 @@ Public env (inlined at build time, set when building): `NEXT_PUBLIC_CF_ANALYTICS
 
 ```bash
 # or run the insert in the D1 console
-npx wrangler d1 execute pour-compass --remote --command "insert into invited_emails (email, invited_by, role) values ('you@example.com', 'deploy', 'owner') on conflict (email) do nothing"
+npx wrangler d1 execute radaroma --remote --command "insert into invited_emails (email, invited_by, role) values ('you@example.com', 'deploy', 'owner') on conflict (email) do nothing"
 ```
 
 Access passes `Cf-Access-Authenticated-User-Email` to the worker; the app also checks the
@@ -49,7 +49,7 @@ Access passes `Cf-Access-Authenticated-User-Email` to the worker; the app also c
 
 ```bash
 npm run seed                              # applies to local D1 + writes scripts/seed-cafes.sql
-npx wrangler d1 execute pour-compass --remote --file=scripts/seed-cafes.sql
+npx wrangler d1 execute radaroma --remote --file=scripts/seed-cafes.sql
 ```
 
 ## Rate limiting

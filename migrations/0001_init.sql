@@ -1,5 +1,5 @@
--- Pour Compass — initial schema (SQLite dialect for Cloudflare D1).
--- Apply: wrangler d1 migrations apply pour-compass --local|--remote
+-- Radaroma — initial schema (SQLite dialect for Cloudflare D1).
+-- Apply: wrangler d1 migrations apply radaroma --local|--remote
 --
 -- SECURITY MODEL (no RLS in D1): all data access goes through the app
 -- server (repositories in lib/db/repositories/). Public pages only ever

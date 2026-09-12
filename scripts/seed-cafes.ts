@@ -1,7 +1,7 @@
 // Idempotent seed of curated cafés + curator scores from data/seed/*.json.
 // Applies to the LOCAL D1 database (the file `npm run preview` serves) and
 // writes scripts/seed-cafes.sql for remote application:
-//   wrangler d1 execute pour-compass --remote --file=scripts/seed-cafes.sql
+//   wrangler d1 execute radaroma --remote --file=scripts/seed-cafes.sql
 //
 // Re-running converges: cafes upsert by slug (never downgrading status),
 // scores upsert by (cafe_id, scored_by).

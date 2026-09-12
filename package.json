@@ -1,5 +1,5 @@
 {
-  "name": "pour_compass",
+  "name": "radaroma",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,8 +15,8 @@
     "seed": "tsx scripts/seed-cafes.ts",
     "smoke:db": "tsx scripts/smoke-db.ts",
     "invite": "tsx scripts/invite-admin.ts",
-    "db:migrate:local": "wrangler d1 migrations apply pour-compass --local",
-    "db:migrate:remote": "wrangler d1 migrations apply pour-compass --remote"
+    "db:migrate:local": "wrangler d1 migrations apply radaroma --local",
+    "db:migrate:remote": "wrangler d1 migrations apply radaroma --remote"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

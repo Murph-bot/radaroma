@@ -29,7 +29,14 @@ export function findLocalD1Db(): string {
 export function openLocalD1(): SqlDb {
   const dbFile = findLocalD1Db()
   if (!dbFile) {
-    throw new Error("local D1 database not found — run `npm run db:migrate:local` first")
+    const candidates = existsSync(".wrangler/state/v3/d1")
+      ? readdirSync(".wrangler/state/v3/d1/miniflare-D1DatabaseObject").join(", ")
+      : "none"
+    throw new Error(
+      `local D1 database not found — run \`npm run db:migrate:local\` first. ` +
+        `If you recently changed the database_id in wrangler.jsonc, stale files may exist ` +
+        `(.wrangler/state/v3/d1/miniflare-D1DatabaseObject: ${candidates}); delete them and re-run.`,
+    )
   }
   return sqliteDb(new Database(dbFile))
 }

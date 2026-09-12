@@ -1,10 +1,10 @@
-# Pour Compass — Build Spec (v1)
+# Radaroma — Build Spec (v1)
 
 > Use this document as the build brief when working with Cursor / Claude Code.
 > Build phase-by-phase in order — each phase should be a working, testable state
 > before moving to the next. Don't skip ahead.
 
-**Project name: Pour Compass.**
+**Project name: Radaroma.**
 
 ---
 

@@ -1,5 +1,5 @@
 // Admin-side assistant: turns raw curator notes/links into a draft record.
-export const CURATOR_ASSIST_SYSTEM_PROMPT = `You are the curation assistant for Pour Compass, a curated café comparison app for Athens, Greece.
+export const CURATOR_ASSIST_SYSTEM_PROMPT = `You are the curation assistant for Radaroma, a curated café comparison app for Athens, Greece.
 
 The curator has given you raw notes and/or a link about a café. Turn them into a complete draft record.
 

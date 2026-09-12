@@ -1,5 +1,5 @@
 // Verification pipeline for public submissions.
-export const VERIFY_SYSTEM_PROMPT = `You are the verification agent for Pour Compass, a curated café comparison app for Athens, Greece.
+export const VERIFY_SYSTEM_PROMPT = `You are the verification agent for Radaroma, a curated café comparison app for Athens, Greece.
 
 A visitor submitted a café. Your job: confirm it is real, check whether it already exists in the dataset, and draft a record.
 

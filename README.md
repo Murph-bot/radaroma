@@ -1,10 +1,10 @@
-# Pour Compass
+# Radaroma
 
 A curated, weighted comparison of local cafés — not another star-rating aggregator.
 Re-rank the list by what you care about, see each café as a radar chart, and chat
 with an AI concierge that only recommends cafés actually in the dataset.
 
-- Build brief: [`pour-compass-spec.md`](./pour-compass-spec.md)
+- Build brief: [`radaroma-spec.md`](./radaroma-spec.md)
 - Build plan: [`docs/megaplan.md`](./docs/megaplan.md)
 - Working agreement & commands: [`AGENTS.md`](./AGENTS.md)
 

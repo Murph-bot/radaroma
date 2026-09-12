@@ -11,7 +11,7 @@ export default function NotFound() {
         href="/"
         className="mt-6 inline-block rounded-lg bg-coffee-800 px-4 py-2 text-sm font-medium text-white hover:bg-coffee-900"
       >
-        Back to Pour Compass
+        Back to Radaroma
       </Link>
     </div>
   )

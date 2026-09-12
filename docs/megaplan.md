@@ -3,13 +3,13 @@ agent: devin-local
 session: bramble-attempt
 created: 2026-09-11T22:02:00Z
 ---
-# Pour Compass — Megaplan (build from spec v1)
+# Radaroma — Megaplan (build from spec v1)
 
-Phased build of Pour Compass, an Athens café comparison app with radar charts, weighted re-ranking, and an OpenRouter-powered AI concierge, deployed to Cloudflare Workers via OpenNext, with a verification gate after every phase.
+Phased build of Radaroma, an Athens café comparison app with radar charts, weighted re-ranking, and an OpenRouter-powered AI concierge, deployed to Cloudflare Workers via OpenNext, with a verification gate after every phase.
 
 ## Context
 
-`pour-compass-spec.md` is the build brief. This megaplan executes it end-to-end with three user-directed deltas:
+`radaroma-spec.md` is the build brief. This megaplan executes it end-to-end with three user-directed deltas:
 
 1. **Deploy**: Vercel → **Cloudflare Workers** via `@opennextjs/cloudflare` (OpenNext). The user has their domain in Cloudflare.
 2. **LLM provider**: Anthropic default → **OpenRouter** (OpenAI-compatible endpoint). Key is added later; the client stays provider-agnostic.
@@ -107,7 +107,7 @@ Recommendation: **root domain if the user owns a dedicated domain for the produc
 
 ```
 / (repo root, git init'd in Phase 0)
-  pour-compass-spec.md        # existing spec
+  radaroma-spec.md        # existing spec
   docs/megaplan.md            # this plan, copied in at Phase 0
   AGENTS.md                   # build/test/verify commands for future sessions
   supabase/migrations/0001_init.sql

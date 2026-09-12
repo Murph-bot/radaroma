@@ -1,9 +1,15 @@
-# Pour Compass — Working Agreement
+# Radaroma — Working Agreement
 
-Curated café comparison app for Athens. Build brief: `pour-compass-spec.md`.
+Curated café comparison app for Athens. Build brief: `radaroma-spec.md`.
 Megaplan (phase order + verification gates): `docs/megaplan.md`.
 Deploy guide (secrets, Access, domain): `docs/deploy.md`.
-Production: https://pour-compass.sotirios-k-goulas.workers.dev (live since 2026-09-12).
+Production: https://radaroma.sotirios-k-goulas.workers.dev (live since 2026-09-12).
+
+## Local D1 gotcha
+
+If the local DB ever shows stale/empty data after changing `database_id` in
+wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
+(regenerable local state), then `npm run db:migrate:local` + `npm run seed`.
 
 ## Known state
 
