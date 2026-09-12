@@ -54,3 +54,5 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
 - Admin auth (Phase 7): Cloudflare Access (email OTP) on `/admin` + `invited_emails` allowlist checked in app code
 - Radar chart: custom SVG component, no chart library
 - Ranking: one pure function `lib/ranking.ts` shared by UI sliders and agent tool
+- PWA: installable home-screen app (manifest + pass-through service worker + generated
+  icons from `scripts/generate-icons.ts`). Online-only by design — no offline caching.

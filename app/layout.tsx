@@ -1,7 +1,8 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
 import { Geist, Geist_Mono } from "next/font/google"
 import Link from "next/link"
+import PwaRegister from "@/components/PwaRegister"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -32,6 +33,25 @@ export const metadata: Metadata = {
     title: "Radaroma",
     description: "Athens cafés, ranked your way.",
   },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Radaroma",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#FAF6F0",
+  width: "device-width",
+  initialScale: 1,
 }
 
 const navLinks = [
@@ -71,6 +91,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+        <PwaRegister />
         <footer className="border-t border-coffee-200 py-6">
           <div className="mx-auto w-full max-w-5xl px-4 text-xs text-coffee-400">
             Radaroma — a curated, weighted comparison of Athens cafés. Scores are opinions;
