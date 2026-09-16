@@ -51,12 +51,37 @@ async function seed(db: SqlDb) {
 }
 
 describe("searchWeb", () => {
-  it("degrades gracefully without a search key", async () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it("falls back to DuckDuckGo Lite without a search key", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => ({
+        ok: String(url).includes("lite.duckduckgo.com"),
+        status: 200,
+        text: async () =>
+          `<a class='result-link' href='//duckduckgo.com/l/?uddg=https%3A%2F%2Ftafcoffee.gr'>TAF</a>` +
+          `<td class='result-snippet'>roaster</td>`,
+      })),
+    )
     const db = createTestDb()
     const res = (await AGENT_TOOLS.searchWeb.execute({ query: "taf coffee athens" }, { db })) as {
+      source: string
+      results: { url: string }[]
+    }
+    expect(res.source).toBe("duckduckgo")
+    expect(res.results[0].url).toBe("https://tafcoffee.gr")
+  })
+
+  it("returns an error when the fallback fetch fails", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 502 })))
+    const db = createTestDb()
+    const res = (await AGENT_TOOLS.searchWeb.execute({ query: "x y z" }, { db })) as {
       error: string
     }
-    expect(res.error).toContain("SEARCH_API_KEY")
+    expect(res.error).toContain("502")
   })
 })
 

@@ -7,7 +7,7 @@ export function conciergeSystemPrompt(cafeContext?: string): string {
       "Answer questions about it directly. You may still use queryCafesByWeights for comparisons and recommendations."
     : ""
   return (
-    `You are the Radaroma café concierge for Athens, Greece. Radaroma is a curated, ` +
+    `You are the Radaroma café concierge for the Attica region of Greece (Athens and its suburbs). Radaroma is a curated, ` +
     `weighted comparison of local cafés — every café has a radar profile across five axes: ` +
     `quality, price-value, work-friendliness, quiet-vibe, and specialty depth.` +
     scope +

@@ -125,7 +125,7 @@ export default function SubmitForm() {
           maxLength={500}
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g. Voulis 7, Athens 105 62"
+          placeholder="e.g. Voulis 7, Athens or Leof. Kifisias 232, Kifisia"
           className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>

@@ -4,7 +4,7 @@ import SubmitForm from "@/components/SubmitForm"
 export const metadata: Metadata = {
   title: "Submit a café",
   description:
-    "Know a great Athens café that's missing? Submit it — an AI concierge verifies it's real and checks for duplicates before it goes live.",
+    "Know a great Attica café that's missing? Submit it — an AI concierge verifies it's real and checks for duplicates before it goes live.",
 }
 
 export default function SubmitPage() {

@@ -6,6 +6,7 @@ import { isBlockedHostname } from "@/lib/net"
 import { DEFAULT_WEIGHTS, rankCafes, type Weights } from "@/lib/ranking"
 import { ScoreInputSchema } from "@/lib/schemas/score"
 import type { SqlDb } from "@/lib/db/sql"
+import { duckDuckGoSearch } from "./searchFallback"
 import type { ToolDefinition } from "./types"
 
 // Structured café draft the agent can propose (verify + curator modes).
@@ -42,9 +43,13 @@ const searchWeb: AgentTool = {
   async execute(args, ctx) {
     const { query } = args as z.infer<typeof SearchWebInputSchema>
     if (!ctx.searchApiKey) {
-      return {
-        error: "web search unavailable (SEARCH_API_KEY not configured)",
-        hint: "use fetchPage with a known URL instead",
+      try {
+        const results = await duckDuckGoSearch(query)
+        return results.length
+          ? { results, source: "duckduckgo" }
+          : { results: [], hint: "no results — try fetchPage with a known URL" }
+      } catch (e) {
+        return { error: `search failed: ${e instanceof Error ? e.message : "unknown error"}` }
       }
     }
     try {

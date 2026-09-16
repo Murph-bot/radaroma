@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Cafés",
-  description: "All curated Athens cafés, ranked by what you care about.",
+  description: "All curated Attica cafés, ranked by what you care about.",
 }
 
 export default async function CafesPage({

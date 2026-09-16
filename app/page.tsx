@@ -14,7 +14,7 @@ export default async function Home() {
     <div className="space-y-14">
       <section className="mx-auto max-w-2xl pt-6 text-center">
         <h1 className="text-4xl font-bold tracking-tight text-coffee-900 sm:text-5xl">
-          Athens cafés, <span className="text-coffee-600">ranked your way</span>.
+          Attica cafés, <span className="text-coffee-600">ranked your way</span>.
         </h1>
         <p className="mt-4 text-lg text-coffee-600">
           Not another star-rating aggregator. Every café is a radar chart — re-rank the list by

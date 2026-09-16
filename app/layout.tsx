@@ -21,17 +21,17 @@ export const metadata: Metadata = {
     template: "%s · Radaroma",
   },
   description:
-    "Athens cafés, ranked your way. Compare cafés by what you care about — quiet, social, price-value, specialty depth, work-friendliness — and ask the concierge.",
+    "Attica cafés, ranked your way. Compare cafés by what you care about — quiet, social, price-value, specialty depth, work-friendliness — and ask the concierge.",
   openGraph: {
     title: "Radaroma",
     description:
-      "Athens cafés, ranked your way. Radar charts, weighted re-ranking, and an AI concierge grounded in the dataset.",
+      "Attica cafés, ranked your way. Radar charts, weighted re-ranking, and an AI concierge grounded in the dataset.",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Radaroma",
-    description: "Athens cafés, ranked your way.",
+    description: "Attica cafés, ranked your way.",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-baseline gap-1.5">
               <span className="text-lg font-bold tracking-tight text-coffee-900">Radaroma</span>
-              <span className="text-xs text-coffee-400">Athens</span>
+              <span className="text-xs text-coffee-400">Attica</span>
             </Link>
             <nav className="flex items-center gap-1">
               {navLinks.map((link) => (
@@ -94,7 +94,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <PwaRegister />
         <footer className="border-t border-coffee-200 py-6">
           <div className="mx-auto w-full max-w-5xl px-4 text-xs text-coffee-400">
-            Radaroma — a curated, weighted comparison of Athens cafés. Scores are opinions;
+            Radaroma — a curated, weighted comparison of Attica cafés. Scores are opinions;
             go taste for yourself.
           </div>
         </footer>

@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Radaroma — Athens cafés, ranked your way",
+    name: "Radaroma — Attica cafés, ranked your way",
     short_name: "Radaroma",
-    description: "Curated Athens cafés with radar charts, weighted re-ranking, and an AI concierge.",
+    description: "Curated Attica cafés with radar charts, weighted re-ranking, and an AI concierge.",
     start_url: "/",
     display: "standalone",
     background_color: "#FAF6F0",
