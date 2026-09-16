@@ -11,10 +11,10 @@ const SLIDER_STEP = 0.05
 
 const priceTiers = [
   { value: "all", label: "Any price" },
-  { value: "1", label: "$" },
-  { value: "2", label: "$$" },
-  { value: "3", label: "$$$" },
-  { value: "4", label: "$$$$" },
+  { value: "1", label: "€" },
+  { value: "2", label: "€€" },
+  { value: "3", label: "€€€" },
+  { value: "4", label: "€€€€" },
 ]
 
 interface CafeExplorerProps {

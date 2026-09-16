@@ -1,8 +1,7 @@
 import Link from "next/link"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
+import { priceTierLabel } from "@/lib/price"
 import type { RankedCafe } from "@/lib/ranking"
-
-const PRICE_TIER_LABEL = ["", "$", "$$", "$$$", "$$$$"]
 
 export default function RankedCafeCard({ ranked }: { ranked: RankedCafe }) {
   const { cafe, score, rankScore } = ranked
@@ -50,7 +49,7 @@ export default function RankedCafeCard({ ranked }: { ranked: RankedCafe }) {
           )}
         </div>
         <p className="mt-0.5 text-sm text-coffee-500">
-          {cafe.neighborhood} · {PRICE_TIER_LABEL[cafe.priceTier]}
+          {cafe.neighborhood} · {priceTierLabel(cafe.priceTier)}
         </p>
         {isCommunity && (
           <span className="mt-1 inline-block rounded bg-sky-100 px-1.5 py-0.5 text-[11px] font-medium text-sky-800">

@@ -4,12 +4,11 @@ import { notFound } from "next/navigation"
 import ConciergeChat from "@/components/ConciergeChat"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
 import { getPublicCafe } from "@/lib/queries/publicCafes"
+import { priceTierLabel } from "@/lib/price"
 import { AXIS_LABELS } from "@/lib/radar"
 import { SCORE_AXES, type ScoreAxis } from "@/lib/schemas/score"
 
 export const dynamic = "force-dynamic"
-
-const PRICE_TIER_LABEL = ["", "$", "$$", "$$$", "$$$$"]
 
 export async function generateMetadata({
   params,
@@ -59,7 +58,7 @@ export default async function CafeDetailPage({
           )}
         </div>
         <p className="text-coffee-600">
-          {cafe.neighborhood} · {PRICE_TIER_LABEL[cafe.priceTier]}
+          {cafe.neighborhood} · {priceTierLabel(cafe.priceTier)}
         </p>
         <p className="text-sm text-coffee-500">{cafe.address}</p>
       </header>
@@ -132,8 +131,8 @@ export default async function CafeDetailPage({
         <ConciergeChat
           cafeContext={
             score
-              ? `${cafe.name} (${cafe.neighborhood}, ${PRICE_TIER_LABEL[cafe.priceTier]} tier). Scores: Quality ${score.quality}/5, Value ${score.priceValue}/5, Work ${score.workFriendliness}/5, Quiet ${score.quietVibe}/5, Specialty ${score.specialtyDepth}/5.`
-              : `${cafe.name} (${cafe.neighborhood}, ${PRICE_TIER_LABEL[cafe.priceTier]} tier). No scores yet.`
+              ? `${cafe.name} (${cafe.neighborhood}, ${priceTierLabel(cafe.priceTier)} tier). Scores: Quality ${score.quality}/5, Value ${score.priceValue}/5, Work ${score.workFriendliness}/5, Quiet ${score.quietVibe}/5, Specialty ${score.specialtyDepth}/5.`
+              : `${cafe.name} (${cafe.neighborhood}, ${priceTierLabel(cafe.priceTier)} tier). No scores yet.`
           }
           placeholder={`Ask about ${cafe.name}…`}
         />
