@@ -198,17 +198,6 @@
     "notes": "specialty coffee by Kudu Roasters with focaccia brunch; scores estimate"
   },
   {
-    "slug": "il-toto-kifisia",
-    "name": "Il Toto Roastery Boutique",
-    "address": "Leof. Kifisias 232, Kifisia 145 62",
-    "neighborhood": "Kifisia",
-    "lat": 38.078,
-    "lng": 23.813,
-    "priceTier": 2,
-    "scores": { "quality": 3, "priceValue": 4, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 3 },
-    "notes": "roastery-backed specialty boutique on Kifisia's main avenue; coords approximate; scores estimate"
-  },
-  {
     "slug": "sweetleaf-glyfada",
     "name": "SweetLeaf",
     "address": "Andrea Papandreou 125, Glyfada 165 61",
