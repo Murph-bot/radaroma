@@ -22,10 +22,19 @@ export interface ToolDefinition {
   parameters: Record<string, unknown> // JSON Schema
 }
 
+export interface JsonSchemaSpec {
+  name: string
+  schema: Record<string, unknown>
+}
+
 export interface CompleteRequest {
   system: string
   messages: ChatMessage[]
   tools?: ToolDefinition[]
+  // Provider-enforced structured output (OpenAI response_format: json_schema
+  // with strict mode). Only for tool-free calls — combined with `tools` it can
+  // break tool calling on some providers.
+  jsonSchema?: JsonSchemaSpec
 }
 
 // The only LLM surface the agent loop depends on — production is

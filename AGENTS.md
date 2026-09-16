@@ -14,9 +14,11 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
 
 ## Known state
 
-- LLM live E2E not yet run: user adds the OpenRouter key to `.env.local` + `.dev.vars`
-  (local) and `wrangler secret put LLM_API_KEY` (prod); then run the live concierge +
-  verify tests. Everything else is mock-tested (FakeLlm).
+- LLM is live on prod: OpenRouter key set (`.env.local` + `.dev.vars` + `wrangler secret`),
+  model `deepseek/deepseek-v4-flash-0731`. Concierge verified end-to-end; verify pipeline
+  correctly flags duplicates and rejects fakes.
+- `searchWeb` needs a Tavily key (`SEARCH_API_KEY` env/secret, https://tavily.com free
+  tier). Without it the verify agent still works but relies on `fetchPage` URL-guessing.
 - Admin on prod needs Cloudflare Access setup (docs/deploy.md) + an `invited_emails` row.
 - Seed scores in `data/seed/cafes.athens.json` are drafts awaiting user review.
 

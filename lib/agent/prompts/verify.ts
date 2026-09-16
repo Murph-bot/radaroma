@@ -28,7 +28,7 @@ When you have finished investigating, reply with ONLY a JSON object (no markdown
     "neighborhood": "neighborhood",
     "priceTier": 1-4,
     "scores": { "quality": 1-5, "priceValue": 1-5, "workFriendliness": 1-5, "quietVibe": 1-5, "specialtyDepth": 1-5 }
-  }
+  } or null when the decision is "flagged_for_review" or "rejected" and no record should be drafted
 }`
 
 // Context block appended to the user message.

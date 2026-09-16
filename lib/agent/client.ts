@@ -20,7 +20,13 @@ export class OpenRouterLlm implements LlmPort {
         role: m.role,
         content: m.content,
         ...(m.toolCallId !== undefined && { tool_call_id: m.toolCallId }),
-        ...(m.toolCalls !== undefined && { tool_calls: m.toolCalls }),
+        ...(m.toolCalls !== undefined && {
+          tool_calls: m.toolCalls.map((tc) => ({
+            id: tc.id,
+            type: "function" as const,
+            function: { name: tc.name, arguments: tc.arguments },
+          })),
+        }),
       })) as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
       ...(req.tools && req.tools.length > 0
         ? {
@@ -32,6 +38,18 @@ export class OpenRouterLlm implements LlmPort {
                 parameters: t.parameters,
               },
             })),
+          }
+        : {}),
+      ...(req.jsonSchema
+        ? {
+            response_format: {
+              type: "json_schema" as const,
+              json_schema: {
+                name: req.jsonSchema.name,
+                schema: req.jsonSchema.schema,
+                strict: true,
+              },
+            },
           }
         : {}),
     })

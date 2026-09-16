@@ -25,7 +25,10 @@ export async function POST(req: Request) {
   try {
     const llm = createLlmClient()
     const db = await getDb()
-    const res = await runCuratorAssist({ llm, db }, { notes: parsed.data.notes })
+    const res = await runCuratorAssist(
+      { llm, db, searchApiKey: process.env.SEARCH_API_KEY },
+      { notes: parsed.data.notes },
+    )
     return NextResponse.json(res)
   } catch (e) {
     if (e instanceof Error && e.message.includes("LLM_API_KEY")) {

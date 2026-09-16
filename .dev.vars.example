@@ -2,6 +2,7 @@
 # D1 needs no env vars (it arrives as the `DB` binding).
 
 LLM_API_KEY=sk-or-...
-LLM_MODEL=openai/gpt-4o
+LLM_MODEL=deepseek/deepseek-v4-flash-0731
 LLM_BASE_URL=https://openrouter.ai/api/v1
+SEARCH_API_KEY=tvly-...
 APP_URL=http://localhost:3000

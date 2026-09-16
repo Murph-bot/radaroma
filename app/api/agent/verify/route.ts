@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   try {
     const llm = createLlmClient()
     const result = await verifySubmission(
-      { llm, db },
+      { llm, db, searchApiKey: process.env.SEARCH_API_KEY },
       {
         submittedName: parsed.data.submittedName,
         submittedLocation: parsed.data.submittedLocation,

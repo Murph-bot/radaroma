@@ -164,12 +164,28 @@ describe("runVerify", () => {
     expect(res.confidence).toBeNull()
   })
 
-  it("flags when the loop exceeds max rounds", async () => {
+  it("recovers an unparsable verdict via the json-mode corrective call", async () => {
+    const llm = new FakeLlm((_req, call) =>
+      call === 0
+        ? textResponse("The café checks out, but let me say that in words.")
+        : textResponse(verifyJson({ decision: "flagged_for_review", confidence: 0.6 })),
+    )
+    const res = await runVerify({ llm, db }, { name: "X", location: "Y" })
+
+    expect(llm.requests[1]?.jsonSchema?.name).toBe("verify_verdict")
+    expect(res.decision).toBe("flagged_for_review")
+    expect(res.confidence).toBe(0.6)
+    expect(res.record?.name).toBe("New Place Coffee")
+  })
+
+  it("forces a final answer pass when tool rounds run out", async () => {
     const llm = new FakeLlm(() => toolCallResponse("searchWeb", { query: "x" }))
     const res = await runVerify({ llm, db, maxToolRounds: 2 }, { name: "X", location: "Y" })
 
     expect(res.decision).toBe("flagged_for_review")
-    expect(res.reasoning).toContain("timed out")
+    const finalReq = llm.requests[2]
+    expect(finalReq?.tools).toBeUndefined()
+    expect(finalReq?.jsonSchema?.name).toBe("verify_verdict")
   })
 
   it("respects the agent's rejected decision", async () => {

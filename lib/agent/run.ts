@@ -14,7 +14,7 @@ import { conciergeSystemPrompt } from "./prompts/concierge"
 import { VERIFY_SYSTEM_PROMPT, verifyUserPrompt } from "./prompts/verify"
 import { CURATOR_ASSIST_SYSTEM_PROMPT, curatorAssistUserPrompt } from "./prompts/curatorAssist"
 import type { AgentMode } from "@/lib/schemas/agentRun"
-import type { ChatMessage, LlmPort } from "./types"
+import type { ChatMessage, JsonSchemaSpec, LlmPort } from "./types"
 
 export interface AgentDeps {
   llm: LlmPort
@@ -27,12 +27,6 @@ const MAX_TOOL_ROUNDS = 6
 
 export const AUTO_VERIFY_THRESHOLD = 0.75
 export const DUPLICATE_RADIUS_M = 200
-
-export class AgentLoopError extends Error {
-  constructor(public rounds: number) {
-    super(`agent exceeded ${rounds} tool rounds`)
-  }
-}
 
 // Extract a JSON object from model output: plain JSON, fenced JSON, or JSON
 // embedded in prose (first balanced {...} span).
@@ -65,6 +59,7 @@ async function runToolLoop(
     system: string
     userMessages: ChatMessage[]
     toolNames: AgentToolName[]
+    finalJsonSchema?: JsonSchemaSpec
   },
 ): Promise<LoopResult> {
   const { llm, db, searchApiKey, maxToolRounds = MAX_TOOL_ROUNDS } = deps
@@ -129,7 +124,14 @@ async function runToolLoop(
     }
   }
 
-  throw new AgentLoopError(maxToolRounds)
+  // Tool rounds exhausted — force a final answer pass with no tools offered,
+  // so the model must produce a verdict instead of investigating forever.
+  const final = await deps.llm.complete({
+    system: opts.system,
+    messages,
+    ...(opts.finalJsonSchema ? { jsonSchema: opts.finalJsonSchema } : {}),
+  })
+  return { content: final.content, toolLog }
 }
 
 async function logRun(
@@ -159,8 +161,17 @@ const VerifyOutputSchema = z.object({
   confidence: z.number().min(0).max(1),
   decision: z.enum(["auto_verified", "flagged_for_review", "rejected"]),
   reasoning: z.string().optional().default(""),
-  record: DraftRecordSchema,
+  // Nullable: a flagged/rejected verdict may legitimately carry no draft.
+  record: DraftRecordSchema.nullable().optional().default(null),
 })
+
+// Provider-enforced verdict shape for tool-free verdict calls. Derived from
+// the Zod schema so the wire contract can't drift from the parser.
+const VERDICT_SCHEMA_SPEC = (() => {
+  const full = z.toJSONSchema(VerifyOutputSchema) as Record<string, unknown>
+  delete full.$schema
+  return { name: "verify_verdict", schema: full }
+})()
 
 export interface VerifyOutcome {
   decision: "auto_verified" | "flagged_for_review" | "rejected"
@@ -180,29 +191,38 @@ export async function runVerify(
   deps: AgentDeps,
   input: { name: string; location: string; note?: string; submissionId?: string },
 ): Promise<VerifyOutcome> {
-  let loop: LoopResult
-  try {
-    loop = await runToolLoop(deps, {
-      system: VERIFY_SYSTEM_PROMPT,
-      userMessages: [{ role: "user", content: verifyUserPrompt(input) }],
-      toolNames: ["searchWeb", "fetchPage", "findNearbyCafes", "draftCafeRecord"],
-    })
-  } catch (e) {
-    if (e instanceof AgentLoopError) {
-      await logRun(deps, {
-        mode: "verify_submission",
-        submissionId: input.submissionId,
-        toolLog: [],
-        decision: "flagged_for_review",
-        reasoning: `agent exceeded tool rounds (${e.rounds})`,
-      })
-      return { ...FLAGGED, reasoning: "verification timed out — flagged for manual review" }
-    }
-    throw e
-  }
+  const loop = await runToolLoop(deps, {
+    system: VERIFY_SYSTEM_PROMPT,
+    userMessages: [{ role: "user", content: verifyUserPrompt(input) }],
+    toolNames: ["searchWeb", "fetchPage", "findNearbyCafes", "draftCafeRecord"],
+    finalJsonSchema: VERDICT_SCHEMA_SPEC,
+  })
 
   const raw = extractJson(loop.content)
-  const parsed = raw ? VerifyOutputSchema.safeParse(raw) : null
+  let parsed = raw ? VerifyOutputSchema.safeParse(raw) : null
+  let verdictText = loop.content
+  if (!parsed?.success) {
+    // The investigation finished but the verdict wasn't valid JSON — give the
+    // model one corrective pass with provider-enforced JSON output.
+    const retry = await deps.llm.complete({
+      system: VERIFY_SYSTEM_PROMPT,
+      messages: [
+        { role: "user", content: verifyUserPrompt(input) },
+        ...(loop.content
+          ? [{ role: "assistant" as const, content: loop.content }]
+          : []),
+        {
+          role: "user",
+          content:
+            "Now reply with ONLY the verdict JSON object described above (no fences, no commentary).",
+        },
+      ],
+      jsonSchema: VERDICT_SCHEMA_SPEC,
+    })
+    verdictText = retry.content
+    const retryRaw = extractJson(retry.content)
+    parsed = retryRaw ? VerifyOutputSchema.safeParse(retryRaw) : null
+  }
   let outcome: VerifyOutcome = parsed?.success
     ? {
         decision: parsed.data.decision,
@@ -246,7 +266,9 @@ export async function runVerify(
   await logRun(deps, {
     mode: "verify_submission",
     submissionId: input.submissionId,
-    toolLog: loop.toolLog,
+    // Observability: append the raw verdict text so unparseable outputs are
+    // debuggable from agent_runs instead of invisible.
+    toolLog: [...loop.toolLog, { finalOutput: verdictText?.slice(0, 2_000) ?? null }],
     confidenceScore: outcome.confidence,
     decision: outcome.decision,
     reasoning: outcome.reasoning,
@@ -265,23 +287,16 @@ export async function runConcierge(
   deps: AgentDeps,
   input: { history: ConciergeMessage[]; cafeContext?: string },
 ): Promise<{ content: string }> {
-  try {
-    const loop = await runToolLoop(deps, {
-      system: conciergeSystemPrompt(input.cafeContext),
-      userMessages: input.history.map((m) => ({ role: m.role, content: m.content })),
-      toolNames: ["queryCafesByWeights"],
-    })
-    await logRun(deps, { mode: "concierge_chat", toolLog: loop.toolLog })
-    return { content: loop.content ?? "" }
-  } catch (e) {
-    if (e instanceof AgentLoopError) {
-      await logRun(deps, { mode: "concierge_chat", toolLog: [], reasoning: "loop exceeded" })
-      return {
-        content:
-          "I got tangled up in my notes — give me a moment and try again, or ask me to rank cafés by something specific.",
-      }
-    }
-    throw e
+  const loop = await runToolLoop(deps, {
+    system: conciergeSystemPrompt(input.cafeContext),
+    userMessages: input.history.map((m) => ({ role: m.role, content: m.content })),
+    toolNames: ["queryCafesByWeights"],
+  })
+  await logRun(deps, { mode: "concierge_chat", toolLog: loop.toolLog })
+  return {
+    content:
+      loop.content ||
+      "I got tangled up in my notes — give me a moment and try again, or ask me to rank cafés by something specific.",
   }
 }
 
