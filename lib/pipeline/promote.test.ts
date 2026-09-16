@@ -74,4 +74,15 @@ describe("promoteRecord", () => {
     })
     expect(cafe.slug).toBe("new-place-2")
   })
+
+  it("does not collapse a Greek-only name to the literal slug 'cafe'", async () => {
+    const cafe = await promoteRecord(db, {
+      record: { ...record, name: "Καφές Λόφος" },
+      source: "public_submission",
+      confidenceScore: 0.9,
+      verificationNotes: "agent verified",
+    })
+    expect(cafe.slug).not.toBe("cafe")
+    expect(cafe.slug).toBe("καφές-λόφος")
+  })
 })

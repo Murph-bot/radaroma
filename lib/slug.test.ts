@@ -16,6 +16,15 @@ describe("slugify", () => {
     expect(slugify("123")).toBe("123")
     expect(slugify("")).toBe("")
   })
+
+  it("keeps Greek letters in kebab slugs", () => {
+    expect(slugify("Καφές")).toBe("καφές")
+    expect(slugify("Μπλε Καφέ")).toBe("μπλε-καφέ")
+  })
+
+  it("does not drop the Greek half of a mixed name", () => {
+    expect(slugify("Φίλτρο & Espresso")).toBe("φίλτρο-and-espresso")
+  })
 })
 
 describe("uniqueSlug", () => {

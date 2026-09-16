@@ -1,12 +1,16 @@
 // Kebab-case slug from a café name, e.g. "TAF Coffee" -> "taf-coffee".
+// Unicode-aware: Greek (and other non-Latin) letters survive — an Attica
+// product needs Greek URLs. Latin diacritics are still stripped ("Café" ->
+// "cafe"); NFC recomposition keeps Greek tonos as precomposed codepoints.
 export function slugify(name: string): string {
   return name
     .toLowerCase()
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // strip diacritics
+    .replace(/(?<=[a-z])\p{M}/gu, "") // strip combining marks on Latin bases only
     .replace(/&/g, " and ")
-    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/[^\p{L}\p{N}\p{M}]+/gu, "-")
     .replace(/^-+|-+$/g, "")
+    .normalize("NFC")
     .slice(0, 60)
 }
 
