@@ -3,7 +3,8 @@
 Curated café comparison app for Athens. Build brief: `radaroma-spec.md`.
 Megaplan (phase order + verification gates): `docs/megaplan.md`.
 Deploy guide (secrets, Access, domain): `docs/deploy.md`.
-Production: https://radaroma.sotirios-k-goulas.workers.dev (live since 2026-09-12).
+Production: https://radaroma.com (canonical, custom domain since 2026-09-16).
+Fallback URL: https://radaroma.sotirios-k-goulas.workers.dev (workers.dev stays enabled).
 
 ## Local D1 gotcha
 

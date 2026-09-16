@@ -23,12 +23,19 @@ npx wrangler secret put APP_URL          # https://your-domain
 Public env (inlined at build time, set when building): `NEXT_PUBLIC_CF_ANALYTICS_TOKEN`
 (Cloudflare Web Analytics site token, optional).
 
-## Custom domain (Cloudflare dashboard, ~2 min)
+## Custom domain (done for radaroma.com)
 
-1. Workers & Pages → your worker (`radaroma`) → Settings → Domains & Routes → Add custom domain.
-2. Pick the root domain (dedicated product domain like `pourcompass.com`) or a subdomain
-   (`pour.example.com`) — Cloudflare auto-creates the DNS record since the zone is in the same account.
-3. HTTPS is automatic.
+`radaroma.com` and `www.radaroma.com` are attached to the `radaroma` worker via the
+`routes` array in `wrangler.jsonc` (`"custom_domain": true`). `wrangler deploy` applies
+them and Cloudflare auto-creates the DNS records (the zone is on Cloudflare Registrar
+in the same account). HTTPS is automatic — certs can take a few minutes after the
+first deploy. The `workers.dev` URL stays enabled as a fallback.
+
+Pending: `radaroma.gr` — bought but nameservers are not yet delegated to Cloudflare.
+Once the zone is active, add another route entry and redeploy.
+
+Alternative to `routes`: Workers & Pages → `radaroma` → Settings → Domains & Routes →
+Add custom domain in the dashboard.
 
 ## Admin access (Cloudflare Access, ~3 min)
 
