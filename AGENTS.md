@@ -19,10 +19,10 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
   correctly flags duplicates and rejects fakes.
 - `searchWeb` needs a Tavily key (`SEARCH_API_KEY` env/secret, https://tavily.com free
   tier). Without it the verify agent still works but relies on `fetchPage` URL-guessing.
-- Admin auth: app verifies the Cloudflare Access JWT (`lib/admin/auth.ts`); the bare
-  email header is never trusted. Prod still needs (docs/deploy.md): Access app on
-  radaroma.com covering `/admin` + `/api/admin`, `CF_ACCESS_TEAM_DOMAIN` +
-  `CF_ACCESS_AUD` secrets, and an `invited_emails` row (remote D1 is empty).
+- Admin auth is live: Access app on radaroma.com covers `/admin` + `/api/admin`
+  (OTP login), `CF_ACCESS_TEAM_DOMAIN` + `CF_ACCESS_AUD` secrets set, owner row in
+  remote `invited_emails`. App verifies the Access JWT — the bare email header is
+  never trusted, and the workers.dev fallback fails closed (verified 2026-09-17).
 - Seed scores in `data/seed/cafes.athens.json` are drafts awaiting user review.
 
 ## Commands
