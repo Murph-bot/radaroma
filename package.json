@@ -11,7 +11,7 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "preview": "opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare deploy",
+    "deploy": "opennextjs-cloudflare build && wrangler deploy",
     "seed": "tsx scripts/seed-cafes.ts",
     "smoke:db": "tsx scripts/smoke-db.ts",
     "invite": "tsx scripts/invite-admin.ts",

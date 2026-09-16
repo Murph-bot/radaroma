@@ -58,10 +58,15 @@ export async function getAdminEmail(headers: Headers): Promise<string | null> {
   if (accessEmail) return accessEmail
   // Local dev without Access: ADMIN_EMAIL + RADAROMA_DEV_ADMIN=1.
   // The flag is explicit so this path can never silently become a prod
-  // auth bypass (the allowlist check still applies either way).
+  // auth bypass (the allowlist check still applies either way). It is also
+  // gated on Access being unconfigured: .env.local values can be inlined
+  // into the prod bundle at build time, so neither ADMIN_EMAIL nor the
+  // flag may enable the fallback where CF_ACCESS_AUD exists.
   const devEmail = process.env.ADMIN_EMAIL
   const devAllowed =
-    process.env.NODE_ENV !== "production" || process.env.RADAROMA_DEV_ADMIN === "1"
+    (process.env.NODE_ENV !== "production" ||
+      process.env.RADAROMA_DEV_ADMIN === "1") &&
+    !process.env.CF_ACCESS_AUD
   if (devEmail && devAllowed) return normalizeEmail(devEmail)
   return null
 }

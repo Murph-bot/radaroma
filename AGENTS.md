@@ -17,13 +17,23 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
 - LLM is live on prod: OpenRouter key set (`.env.local` + `.dev.vars` + `wrangler secret`),
   model `deepseek/deepseek-v4-flash-0731`. Concierge verified end-to-end; verify pipeline
   correctly flags duplicates and rejects fakes.
-- `searchWeb` needs a Tavily key (`SEARCH_API_KEY` env/secret, https://tavily.com free
-  tier). Without it the verify agent still works but relies on `fetchPage` URL-guessing.
+- `searchWeb` falls back to a DuckDuckGo HTML scrape when `SEARCH_API_KEY` (Tavily)
+  is unset; add the secret for better results.
 - Admin auth is live: Access app on radaroma.com covers `/admin` + `/api/admin`
   (OTP login), `CF_ACCESS_TEAM_DOMAIN` + `CF_ACCESS_AUD` secrets set, owner row in
   remote `invited_emails`. App verifies the Access JWT — the bare email header is
   never trusted, and the workers.dev fallback fails closed (verified 2026-09-17).
 - Seed scores in `data/seed/cafes.athens.json` are drafts awaiting user review.
+
+## Deploy gotchas (learned the hard way, 2026-09-17)
+
+- `opennextjs-cloudflare deploy` does NOT rebuild — it uploads whatever `.open-next`
+  already contains. `npm run deploy` is wired as `build && wrangler deploy` for this
+  reason; never deploy a stale `.open-next`. If in doubt, delete `.open-next` first.
+- Turbopack inlines `.env.local` values into the prod server bundle — dev-only vars
+  (`ADMIN_EMAIL`, `RADAROMA_DEV_ADMIN`) reach the prod worker. The dev auth fallback
+  is therefore gated on `!CF_ACCESS_AUD`, which only exists on prod. Keep dev flags
+  out of `.dev.vars` too — `opennextjs-cloudflare deploy` uploads them as secrets.
 
 ## Commands
 

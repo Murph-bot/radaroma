@@ -105,6 +105,17 @@ describe("getAdminEmail — local dev fallback", () => {
     vi.stubEnv("NODE_ENV", "production")
     expect(await getAdminEmail(new Headers())).toBeNull()
   })
+
+  // Regression: Turbopack inlines .env.local into the prod bundle, so
+  // ADMIN_EMAIL and the dev flag can reach the prod worker. The fallback
+  // must stay dead wherever Access is configured — prod always has an AUD.
+  it("ignores the dev fallback when Access is configured", async () => {
+    stubAccessEnv()
+    vi.stubEnv("ADMIN_EMAIL", "me@example.com")
+    vi.stubEnv("NODE_ENV", "development")
+    vi.stubEnv("RADAROMA_DEV_ADMIN", "1")
+    expect(await getAdminEmail(new Headers())).toBeNull()
+  })
 })
 
 describe("requireAdmin", () => {
