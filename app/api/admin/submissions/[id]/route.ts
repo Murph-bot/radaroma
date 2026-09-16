@@ -38,6 +38,12 @@ export async function POST(
   if (!submission) return NextResponse.json({ error: "submission not found" }, { status: 404 })
 
   if (parsed.data.action === "reject") {
+    if (submission.status === "promoted") {
+      return NextResponse.json(
+        { error: "submission was already promoted — edit or remove the café instead" },
+        { status: 409 },
+      )
+    }
     await submissions.updateStatus(id, "rejected")
     return NextResponse.json({ ok: true })
   }

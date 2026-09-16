@@ -17,7 +17,7 @@ Secrets (server-only, one-time):
 ```bash
 npx wrangler secret put LLM_API_KEY      # your OpenRouter key
 npx wrangler secret put APP_URL          # https://your-domain
-# NEVER set ADMIN_EMAIL / POUR_COMPASS_DEV_ADMIN in production
+# NEVER set ADMIN_EMAIL / RADAROMA_DEV_ADMIN in production
 ```
 
 Public env (inlined at build time, set when building): `NEXT_PUBLIC_CF_ANALYTICS_TOKEN`
@@ -37,20 +37,38 @@ Once the zone is active, add another route entry and redeploy.
 Alternative to `routes`: Workers & Pages → `radaroma` → Settings → Domains & Routes →
 Add custom domain in the dashboard.
 
-## Admin access (Cloudflare Access, ~3 min)
+## Admin access (Cloudflare Access + JWT verify, ~5 min)
+
+The app verifies the signed Access JWT (`Cf-Access-Jwt-Assertion` / `CF_Authorization`
+cookie) against the app's AUD tag — the bare `cf-access-authenticated-user-email`
+header is never trusted (forgeable on uncovered paths/hosts). Two env vars wire it up.
 
 1. Zero Trust → Access → Applications → Add an application (Self-hosted).
-2. Domain: `https://your-domain/admin*` — choose **Email OTP** as the login method (free up to 50 users).
-3. Add your email as a user/policy.
-4. Seed the allowlist in the app DB (remote):
+2. Application domain: `radaroma.com`, and add **both paths**: `admin` and
+   `api/admin` (path covers subpaths; `/api/admin/*` is what the dashboard calls).
+   Optionally also `www.radaroma.com` with the same paths, or redirect www → apex.
+   The `workers.dev` fallback can be added as another hostname on the same app if you
+   want admin there too; without it, admin stays locked there (safe).
+3. Login method: **One-time PIN** (email OTP, free up to 50 users).
+4. Policy: Allow → Include → Emails → your email.
+5. Copy the app's **AUD tag** (app → Overview) and your **team domain**
+   (Zero Trust → Settings, `<team>.cloudflareaccess.com`), then set them:
+
+```bash
+npx wrangler secret put CF_ACCESS_TEAM_DOMAIN   # https://<team>.cloudflareaccess.com
+npx wrangler secret put CF_ACCESS_AUD           # app AUD tag
+# (not really secret — can also live in wrangler.jsonc "vars")
+```
+
+6. Seed the allowlist in the app DB (remote), same email that gets the OTP:
 
 ```bash
 # or run the insert in the D1 console
 npx wrangler d1 execute radaroma --remote --command "insert into invited_emails (email, invited_by, role) values ('you@example.com', 'deploy', 'owner') on conflict (email) do nothing"
 ```
 
-Access passes `Cf-Access-Authenticated-User-Email` to the worker; the app also checks the
-`invited_emails` allowlist. Both must match.
+Verify: `https://radaroma.com/admin` should show the Access OTP screen, then the
+dashboard after login. `curl -X POST https://radaroma.com/api/admin/cafes` → 401.
 
 ## Seed data (remote)
 

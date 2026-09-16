@@ -126,9 +126,9 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
     }
   }
 
-  const handleSaveScores = async (cafeId: string) => {
+  const handleSaveScores = async (cafeId: string, scores: ScoreInput) => {
     setActionError(null)
-    const res = await postJson(`/api/admin/cafes/${cafeId}/scores`, cafeScores[cafeId])
+    const res = await postJson(`/api/admin/cafes/${cafeId}/scores`, scores)
     if (!res.ok) setActionError(res.error ?? "save failed")
     router.refresh()
   }
@@ -286,7 +286,7 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleSaveScores(cafe.id)}
+                  onClick={() => handleSaveScores(cafe.id, current)}
                   className="mt-2 rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-600 hover:bg-coffee-100"
                 >
                   Save scores
