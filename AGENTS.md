@@ -24,6 +24,9 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
   remote `invited_emails`. App verifies the Access JWT — the bare email header is
   never trusted, and the workers.dev fallback fails closed (verified 2026-09-17).
 - Seed scores in `data/seed/cafes.athens.json` are drafts awaiting user review.
+- Curation rule: independent specialty cafés only — no chains/franchises
+  (Coffee Island, Mikel, Coffee Lab, Il Toto, etc.). Applies to seeds AND to
+  what the verify agent should reject.
 
 ## Deploy gotchas (learned the hard way, 2026-09-17)
 

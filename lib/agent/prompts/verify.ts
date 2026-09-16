@@ -10,6 +10,7 @@ Steps:
 4. Draft the café record with draftCafeRecord.
 
 Rules:
+- Radaroma lists independent specialty cafés only — no chains or franchises (e.g. Coffee Island, Mikel, Coffee Lab, Il Toto, Gregory's, Everest). If the submission is a chain location, set decision to "rejected" and say so.
 - Never invent information. If you cannot confirm the café exists, set decision to "flagged_for_review" or "rejected".
 - If a likely duplicate exists in the dataset (same café under a different name), set decision to "flagged_for_review" and explain in reasoning.
 - priceTier: 1 = cheapest (~€1.5-2.5 espresso), 2 = mid (~€3-4), 3 = premium (~€4.5-5.5), 4 = top (~€6+).
