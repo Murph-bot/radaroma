@@ -5,6 +5,7 @@ import {
   isCustomWeights,
   isReviewed,
   rankCafes,
+  topAxis,
   weightedScore,
   type Weights,
 } from "./ranking"
@@ -54,6 +55,13 @@ describe("weightedScore", () => {
   it("returns 0 when all weights are zero", () => {
     const zero: Weights = { quality: 0, priceValue: 0, workFriendliness: 0, quietVibe: 0, specialtyDepth: 0 }
     expect(weightedScore(score("a"), zero)).toBe(0)
+  })
+})
+
+describe("topAxis", () => {
+  it("returns the strongest axis, first in SCORE_AXES order on ties", () => {
+    expect(topAxis(score("a", { quietVibe: 5 }))).toBe("quietVibe")
+    expect(topAxis(score("a"))).toBe("quality")
   })
 })
 

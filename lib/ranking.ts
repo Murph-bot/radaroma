@@ -39,6 +39,12 @@ export function formatMatchLabel(
   return `${word} ${rankScore.toFixed(1)}`
 }
 
+// The axis a café is strongest on — the one-line "why this shape" for a card.
+// Ties resolve in SCORE_AXES order.
+export function topAxis(score: CafeScore): ScoreAxis {
+  return SCORE_AXES.reduce((best, axis) => (score[axis] > score[best] ? axis : best), SCORE_AXES[0])
+}
+
 export function scoreForAxis(score: CafeScore, axis: ScoreAxis): number {
   return score[axis]
 }

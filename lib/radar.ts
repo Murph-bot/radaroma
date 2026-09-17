@@ -76,3 +76,7 @@ export function ringPoints(
 
 export const toSvgPoints = (points: RadarPoint[]): string =>
   points.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ")
+
+// Zine palette: copper / sage / wine. Compare caps at three series.
+// Lives here (not in the client RadarChart module) so server components get a real array.
+export const SERIES_COLORS = ["#b5683a", "#6f7f68", "#7a4a55"]

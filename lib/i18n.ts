@@ -48,6 +48,9 @@ const en = {
   },
   card: {
     match: "match",
+    average: "avg",
+    rankAria: (n: number) => `Rank ${n}`,
+    topAxis: (axis: string, value: number) => `Strongest on ${axis} (${value}/5)`,
     community: "community-submitted, AI-verified",
   },
   cafesPage: {
@@ -115,6 +118,7 @@ const en = {
       "Ask about the best espresso, a quiet corner to work from, or which café fits your budget.",
     thinking: "Thinking…",
     send: "Send",
+    close: "Close",
     inputAria: "Message the concierge",
     disclaimer:
       "Answers are AI-generated (via OpenRouter) and can get details wrong — check the café before you go.",
@@ -181,7 +185,7 @@ const el: Strings = {
       "Ο ιστότοπος δεν αποθηκεύει cookies — η σελίδα διαχείρισης συνδέεται μέσω Cloudflare Access. Τα ανώνυμα στατιστικά επισκέψεων προέρχονται από το Cloudflare Web Analytics, που δεν χρησιμοποιεί cookies.",
   },
   home: {
-    headline: "Τα καφέ της Αττικής, σε σχήμα. Δες πού ξεχωρίζει το καθένα.",
+    headline: "Τα καφέ της Αττικής, σε σχήμα.",
     searchAll: (n: number) => `Αναζήτηση και φίλτρα σε όλα τα ${n} καφέ →`,
   },
   explorer: {
@@ -200,6 +204,9 @@ const el: Strings = {
   },
   card: {
     match: "σκορ",
+    average: "μ.ο.",
+    rankAria: (n: number) => `Θέση ${n}`,
+    topAxis: (axis: string, value: number) => `Ξεχωρίζει σε ${axis} (${value}/5)`,
     community: "πρόταση από την κοινότητα · έλεγχος με AI",
   },
   cafesPage: {
@@ -267,6 +274,7 @@ const el: Strings = {
       "Ρώτησε για τον καλύτερο εσπρέσο, μια ήσυχη γωνιά για δουλειά, ή ποιο καφέ ταιριάζει στον προϋπολογισμό σου.",
     thinking: "Σκέφτεται…",
     send: "Αποστολή",
+    close: "Κλείσιμο",
     inputAria: "Μήνυμα στον βοηθό καφέ",
     disclaimer:
       "Οι απαντήσεις παράγονται με AI (μέσω OpenRouter) και μπορεί να κάνουν λάθη — τσέκαρε το καφέ πριν πας.",
@@ -277,7 +285,7 @@ const el: Strings = {
     priceValue: "Αξία",
     workFriendliness: "Δουλειά",
     quietVibe: "Ησυχία",
-    specialtyDepth: "Specialty",
+    specialtyDepth: "Εξειδίκευση",
   },
   moods: {
     laptopDay: "Για δουλειά με λάπτοπ",
