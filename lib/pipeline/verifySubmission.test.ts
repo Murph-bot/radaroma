@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { RESEND_ENDPOINT } from "@/lib/mail/resend"
 import { CafeRepository } from "@/lib/db/repositories/cafes"
 import { SubmissionRepository } from "@/lib/db/repositories/submissions"
 import { createTestDb } from "@/lib/db/repositories/test-db"
@@ -127,6 +128,68 @@ describe("verifySubmission", () => {
     expect(res.status).toBe("verified")
     if (res.status !== "verified") return
     expect(res.cafeSlug).toBe("new-place-coffee-2")
+  })
+
+  describe("alert email", () => {
+    const fetchMock = vi.fn(async () => new Response("{}", { status: 200 }))
+
+    beforeEach(() => {
+      fetchMock.mockClear()
+      vi.stubGlobal("fetch", fetchMock)
+      vi.stubEnv("RESEND_API_KEY", "re_test")
+      vi.stubEnv("ALERT_EMAIL_TO", "curator@example.com")
+    })
+    afterEach(() => {
+      vi.unstubAllGlobals()
+      vi.unstubAllEnvs()
+      vi.restoreAllMocks()
+    })
+
+    const sentSubject = () => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
+      expect(url).toBe(RESEND_ENDPOINT)
+      const body = JSON.parse(init.body as string) as { to: string[]; subject: string }
+      expect(body.to).toEqual(["curator@example.com"])
+      return body.subject
+    }
+
+    it("emails on verified", async () => {
+      const llm = new FakeLlm(() => textResponse(verifyJson()))
+      await verifySubmission({ llm, db }, input)
+      expect(sentSubject()).toContain("VERIFIED")
+    })
+
+    it("emails on flagged", async () => {
+      const llm = new FakeLlm(() => textResponse(verifyJson({ confidence: 0.4 })))
+      await verifySubmission({ llm, db }, input)
+      expect(sentSubject()).toContain("FLAGGED")
+    })
+
+    it("emails on rejected", async () => {
+      const llm = new FakeLlm(() => textResponse(verifyJson({ decision: "rejected" })))
+      await verifySubmission({ llm, db }, input)
+      expect(sentSubject()).toContain("REJECTED")
+    })
+
+    it("does not call Resend or fail when RESEND_API_KEY is missing", async () => {
+      vi.stubEnv("RESEND_API_KEY", "")
+      vi.spyOn(console, "warn").mockImplementation(() => {})
+      const llm = new FakeLlm(() => textResponse(verifyJson()))
+      const res = await verifySubmission({ llm, db }, input)
+      expect(res.status).toBe("verified")
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it("still returns the result when Resend fails", async () => {
+      fetchMock.mockImplementationOnce(async () => {
+        throw new Error("resend down")
+      })
+      vi.spyOn(console, "error").mockImplementation(() => {})
+      const llm = new FakeLlm(() => textResponse(verifyJson({ decision: "rejected" })))
+      const res = await verifySubmission({ llm, db }, input)
+      expect(res.status).toBe("rejected")
+    })
   })
 
   it("always stores submissions as 'new' first (server-side boundary)", async () => {

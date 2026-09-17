@@ -6,3 +6,7 @@ LLM_MODEL=deepseek/deepseek-v4-flash-0731
 LLM_BASE_URL=https://openrouter.ai/api/v1
 SEARCH_API_KEY=tvly-...
 APP_URL=http://localhost:3000
+# Submission alert emails (docs/deploy.md → "Submission alert emails")
+RESEND_API_KEY=re_...
+ALERT_EMAIL_TO=mimis.sotos@gmail.com
+ALERT_EMAIL_FROM=Radaroma <onboarding@resend.dev>

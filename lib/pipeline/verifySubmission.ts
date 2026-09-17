@@ -6,6 +6,7 @@ import type { SubmissionInput } from "@/lib/schemas/submission"
 import type { AgentDeps, VerifyOutcome } from "@/lib/agent/run"
 import { runVerify } from "@/lib/agent/run"
 import { promoteRecord } from "./promote"
+import { notifySubmissionOutcome } from "@/lib/mail/submissionAlert"
 
 export type VerifySubmissionResult =
   | { status: "verified"; cafeSlug: string; submissionId: string }
@@ -15,6 +16,18 @@ export type VerifySubmissionResult =
 // Fail-open: any pipeline error becomes "flagged" so a human curator
 // reviews it — a submission is never silently dropped.
 export async function verifySubmission(
+  deps: AgentDeps,
+  input: SubmissionInput,
+): Promise<VerifySubmissionResult> {
+  const result = await runPipeline(deps, input)
+  // Alerting is best-effort: never let a mail failure surface to the submitter.
+  await notifySubmissionOutcome(input, result).catch((e) =>
+    console.error("submission alert failed:", e),
+  )
+  return result
+}
+
+async function runPipeline(
   deps: AgentDeps,
   input: SubmissionInput,
 ): Promise<VerifySubmissionResult> {
