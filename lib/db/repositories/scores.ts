@@ -28,19 +28,34 @@ export class ScoreRepository {
     return new Map(rows.map((row) => [row.cafe_id as string, parseCafeScoreRow(row)]))
   }
 
-  async upsertCurator(cafeId: string, input: ScoreInput): Promise<CafeScore> {
+  // Review state on save:
+  //   reviewed: true      → set scores_reviewed_at = now (curator approved these numbers)
+  //   reviewed: false     → clear it (numbers changed; needs another human pass)
+  //   reviewed: undefined → keep whatever is there (seed/pipeline writes never touch review state)
+  async upsertCurator(
+    cafeId: string,
+    input: ScoreInput,
+    opts: { reviewed?: boolean } = {},
+  ): Promise<CafeScore> {
+    const now = nowIso()
+    const reviewedAt = opts.reviewed ? now : null
+    const reviewedSql =
+      opts.reviewed === undefined
+        ? "cafe_scores.scores_reviewed_at"
+        : "excluded.scores_reviewed_at"
     await this.db.run(
       `insert into cafe_scores (
         id, cafe_id, scored_by, quality, price_value, work_friendliness,
-        quiet_vibe, specialty_depth, updated_at
-      ) values (?, ?, 'curator', ?, ?, ?, ?, ?, ?)
+        quiet_vibe, specialty_depth, updated_at, scores_reviewed_at
+      ) values (?, ?, 'curator', ?, ?, ?, ?, ?, ?, ?)
       on conflict (cafe_id, scored_by) do update set
         quality = excluded.quality,
         price_value = excluded.price_value,
         work_friendliness = excluded.work_friendliness,
         quiet_vibe = excluded.quiet_vibe,
         specialty_depth = excluded.specialty_depth,
-        updated_at = excluded.updated_at`,
+        updated_at = excluded.updated_at,
+        scores_reviewed_at = ${reviewedSql}`,
       [
         randomUUID(),
         cafeId,
@@ -49,7 +64,8 @@ export class ScoreRepository {
         input.workFriendliness,
         input.quietVibe,
         input.specialtyDepth,
-        nowIso(),
+        now,
+        reviewedAt,
       ],
     )
     const saved = await this.findForCafe(cafeId)

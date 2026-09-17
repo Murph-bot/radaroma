@@ -27,6 +27,7 @@ const score = (id: string, values: Partial<CafeScore> = {}): CafeScore => ({
   workFriendliness: 3,
   quietVibe: 3,
   specialtyDepth: 3,
+  scoresReviewedAt: null,
   ...values,
 })
 

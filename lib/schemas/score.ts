@@ -17,6 +17,8 @@ export const CafeScoreSchema = z.object({
   workFriendliness: z.number().min(1).max(5),
   quietVibe: z.number().min(1).max(5),
   specialtyDepth: z.number().min(1).max(5),
+  // ISO timestamp of curator review completion; null = draft.
+  scoresReviewedAt: z.string().nullable(),
 })
 export type CafeScore = z.infer<typeof CafeScoreSchema>
 
@@ -30,6 +32,7 @@ export const CafeScoreRowSchema = z
     work_friendliness: z.number().min(1).max(5),
     quiet_vibe: z.number().min(1).max(5),
     specialty_depth: z.number().min(1).max(5),
+    scores_reviewed_at: z.string().nullable(),
   })
   .transform(
     (r): CafeScore => ({
@@ -40,6 +43,7 @@ export const CafeScoreRowSchema = z
       workFriendliness: r.work_friendliness,
       quietVibe: r.quiet_vibe,
       specialtyDepth: r.specialty_depth,
+      scoresReviewedAt: r.scores_reviewed_at,
     }),
   )
 
@@ -55,3 +59,9 @@ export const ScoreInputSchema = CafeScoreSchema.pick({
   specialtyDepth: true,
 })
 export type ScoreInput = z.infer<typeof ScoreInputSchema>
+
+// Admin save payload: scores plus an optional flag that marks the review complete.
+export const ScoreSaveSchema = ScoreInputSchema.extend({
+  markReviewed: z.boolean().optional(),
+})
+export type ScoreSave = z.infer<typeof ScoreSaveSchema>

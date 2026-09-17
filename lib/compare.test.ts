@@ -23,7 +23,7 @@ const ranked = (
     confidenceScore: null,
     verificationNotes: null,
   } satisfies Cafe,
-  score: { cafeId: slug, scoredBy: "curator", ...values },
+  score: { cafeId: slug, scoredBy: "curator", scoresReviewedAt: null, ...values },
   rankScore: 3,
 })
 

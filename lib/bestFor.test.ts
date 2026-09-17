@@ -10,6 +10,7 @@ const base: CafeScore = {
   workFriendliness: 3,
   quietVibe: 3,
   specialtyDepth: 3,
+  scoresReviewedAt: null,
 }
 
 describe("bestForChips", () => {
