@@ -1,18 +1,21 @@
 import Link from "next/link"
 import PentagonMark from "@/components/PentagonMark"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
+import { t, type Locale } from "@/lib/i18n"
 import { priceTierLabel } from "@/lib/price"
 import { formatMatchLabel, type RankedCafe, type Weights } from "@/lib/ranking"
 
 interface RankedCafeCardProps {
   ranked: RankedCafe
   weights: Weights
+  locale?: Locale
 }
 
-export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps) {
+export default function RankedCafeCard({ ranked, weights, locale = "en" }: RankedCafeCardProps) {
+  const s = t(locale)
   const { cafe, score, rankScore } = ranked
   const isCommunity = cafe.source === "public_submission"
-  const matchLabel = formatMatchLabel(rankScore, weights)
+  const matchLabel = formatMatchLabel(rankScore, weights, s.card.match)
 
 
 
@@ -62,7 +65,7 @@ export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps)
         </p>
         {isCommunity && (
           <span className="mt-1 inline-block rounded border border-copper-500/50 bg-copper-100 px-1.5 py-0.5 text-[11px] font-medium text-copper-700">
-            community-submitted, AI-verified
+            {s.card.community}
           </span>
         )}
       </div>

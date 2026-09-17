@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
 import { EB_Garamond, Source_Sans_3 } from "next/font/google"
+import { headers } from "next/headers"
 import Link from "next/link"
 import MobileNav from "@/components/MobileNav"
 import PentagonMark from "@/components/PentagonMark"
 import PwaRegister from "@/components/PwaRegister"
+import { localeFromHost, t } from "@/lib/i18n"
 import "./globals.css"
 
 const ebGaramond = EB_Garamond({
@@ -17,37 +19,38 @@ const sourceSans = Source_Sans_3({
   subsets: ["latin", "greek"],
 })
 
-export const metadata: Metadata = {
-  title: {
-    default: "Radaroma",
-    template: "%s · Radaroma",
-  },
-  description:
-    "Attica cafés, as a shape. Five-axis radar profiles, a ranking you steer with weights, and a concierge that only knows the cafés we list.",
-  openGraph: {
-    title: "Radaroma",
-    description:
-      "Attica cafés, as a shape. Radar charts, weighted re-ranking, and an AI concierge grounded in the dataset.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary",
-    title: "Radaroma",
-    description: "Attica cafés, as a shape.",
-  },
-  manifest: "/manifest.webmanifest",
-  appleWebApp: {
-    capable: true,
-    title: "Radaroma",
-    statusBarStyle: "default",
-  },
-  icons: {
-    icon: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const s = t(localeFromHost((await headers()).get("host")))
+  return {
+    title: {
+      default: s.meta.siteTitle,
+      template: `%s · ${s.meta.siteTitle}`,
+    },
+    description: s.meta.siteDescription,
+    openGraph: {
+      title: s.meta.siteTitle,
+      description: s.meta.ogDescription,
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: s.meta.siteTitle,
+      description: s.meta.twitterDescription,
+    },
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+      capable: true,
+      title: "Radaroma",
+      statusBarStyle: "default",
+    },
+    icons: {
+      icon: [
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    },
+  }
 }
 
 export const viewport: Viewport = {
@@ -56,15 +59,16 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-const navLinks = [
-  { href: "/cafes", label: "Cafés" },
-  { href: "/compare", label: "Compare" },
-  { href: "/submit", label: "Submit a café" },
-]
-
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const locale = localeFromHost((await headers()).get("host"))
+  const s = t(locale)
+  const navLinks = [
+    { href: "/cafes", label: s.nav.cafes },
+    { href: "/compare", label: s.nav.compare },
+    { href: "/submit", label: s.nav.submit },
+  ]
   return (
-    <html lang="en" className={`${ebGaramond.variable} ${sourceSans.variable} h-full antialiased`}>
+    <html lang={s.htmlLang} className={`${ebGaramond.variable} ${sourceSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-coffee-50 font-sans text-coffee-900">
         {process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN && (
           <script
@@ -96,17 +100,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </header>
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 pb-24 sm:pb-8">{children}</main>
         <PwaRegister />
-        <MobileNav />
+        <MobileNav locale={locale} />
         <footer className="border-t border-coffee-200 py-6 pb-20 sm:pb-6">
           <div className="mx-auto w-full max-w-5xl space-y-1 px-4 text-xs text-coffee-400">
-            <p>
-              Radaroma — a curated, weighted comparison of Attica cafés. Scores are opinions;
-              go taste for yourself.
-            </p>
-            <p>
-              This site sets no cookies; the admin area signs in through Cloudflare Access.
-              Anonymous visit stats come from Cloudflare Web Analytics, which is cookieless.
-            </p>
+            <p>{s.footer.tagline}</p>
+            <p>{s.footer.privacy}</p>
           </div>
         </footer>
       </body>

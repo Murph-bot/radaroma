@@ -33,9 +33,10 @@ export function isCustomWeights(weights: Weights): boolean {
 export function formatMatchLabel(
   rankScore: number | null,
   weights: Weights,
+  word = "match",
 ): string | null {
   if (rankScore === null || !isCustomWeights(weights)) return null
-  return `match ${rankScore.toFixed(1)}`
+  return `${word} ${rankScore.toFixed(1)}`
 }
 
 export function scoreForAxis(score: CafeScore, axis: ScoreAxis): number {

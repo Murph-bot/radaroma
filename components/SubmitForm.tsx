@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { t, type Locale } from "@/lib/i18n"
 
 type SubmitState =
   | { phase: "idle" }
@@ -11,7 +12,8 @@ type SubmitState =
   | { phase: "rejected"; reasoning: string | null }
   | { phase: "error"; message: string }
 
-export default function SubmitForm() {
+export default function SubmitForm({ locale = "en" }: { locale?: Locale }) {
+  const s = t(locale)
   const [state, setState] = useState<SubmitState>({ phase: "idle" })
   const [name, setName] = useState("")
   const [location, setLocation] = useState("")
@@ -46,25 +48,23 @@ export default function SubmitForm() {
       } else if (data.status === "flagged") {
         setState({ phase: "flagged", reasoning: data.reasoning ?? null })
       } else {
-        setState({ phase: "error", message: "unexpected response" })
+        setState({ phase: "error", message: s.submit.unexpected })
       }
     } catch (err) {
-      setState({ phase: "error", message: err instanceof Error ? err.message : "network error" })
+      setState({ phase: "error", message: err instanceof Error ? err.message : s.submit.networkError })
     }
   }
 
   if (state.phase === "verified") {
     return (
       <div className="rounded-xl border border-green-200 bg-green-50 p-6 text-center">
-        <p className="text-lg font-semibold text-green-900">Verified — welcome to the list!</p>
-        <p className="mt-1 text-sm text-green-800">
-          The concierge confirmed the café is real and it has no duplicates in the dataset.
-        </p>
+        <p className="text-lg font-semibold text-green-900">{s.submit.verifiedTitle}</p>
+        <p className="mt-1 text-sm text-green-800">{s.submit.verifiedBody}</p>
         <Link
           href={`/cafes/${state.cafeSlug}`}
           className="mt-4 inline-block rounded-lg bg-green-800 px-4 py-2 text-sm font-medium text-white hover:bg-green-900"
         >
-          See it on the map of cafés →
+          {s.submit.verifiedCta}
         </Link>
       </div>
     )
@@ -74,12 +74,10 @@ export default function SubmitForm() {
     return (
       <div className="rounded-xl border border-coffee-200 bg-white p-6 text-center">
         <p className="text-lg font-semibold text-coffee-900">
-          {state.phase === "flagged" ? "Sent for human review" : "Not added this time"}
+          {state.phase === "flagged" ? s.submit.flaggedTitle : s.submit.rejectedTitle}
         </p>
         <p className="mt-1 text-sm text-coffee-800">
-          {state.phase === "flagged"
-            ? "The concierge couldn't fully confirm this café (or it may duplicate one we already have). A curator will take a look."
-            : "The concierge could not confirm this café exists. If it's real, double-check the name and address and try again."}
+          {state.phase === "flagged" ? s.submit.flaggedBody : s.submit.rejectedBody}
         </p>
         {state.reasoning && (
           <p className="mx-auto mt-3 max-w-md rounded-lg bg-white/70 p-3 text-xs text-coffee-800">
@@ -91,7 +89,7 @@ export default function SubmitForm() {
           onClick={() => setState({ phase: "idle" })}
           className="mt-4 rounded-lg border border-coffee-300 px-4 py-2 text-sm font-medium text-coffee-900 hover:bg-coffee-100"
         >
-          Submit another café
+          {s.submit.another}
         </button>
       </div>
     )
@@ -101,7 +99,7 @@ export default function SubmitForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="cafe-name" className="mb-1 block text-sm font-medium text-coffee-700">
-          Café name
+          {s.submit.nameLabel}
         </label>
         <input
           id="cafe-name"
@@ -110,13 +108,13 @@ export default function SubmitForm() {
           maxLength={120}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Kaya"
+          placeholder={s.submit.namePlaceholder}
           className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>
       <div>
         <label htmlFor="cafe-location" className="mb-1 block text-sm font-medium text-coffee-700">
-          Address or Google Maps link
+          {s.submit.locationLabel}
         </label>
         <input
           id="cafe-location"
@@ -125,13 +123,13 @@ export default function SubmitForm() {
           maxLength={500}
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g. Voulis 7, Athens or Leof. Kifisias 232, Kifisia"
+          placeholder={s.submit.locationPlaceholder}
           className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>
       <div>
         <label htmlFor="cafe-note" className="mb-1 block text-sm font-medium text-coffee-700">
-          Anything the concierge should know? <span className="text-coffee-400">(optional)</span>
+          {s.submit.noteLabel} <span className="text-coffee-400">{s.submit.optional}</span>
         </label>
         <textarea
           id="cafe-note"
@@ -139,13 +137,13 @@ export default function SubmitForm() {
           maxLength={1000}
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          placeholder="Great filter coffee, nice courtyard…"
+          placeholder={s.submit.notePlaceholder}
           className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700"
         />
       </div>
       {/* honeypot — hidden from humans, irresistible to bots */}
       <div className="hidden" aria-hidden="true">
-        <label htmlFor="cafe-website">Leave this field empty</label>
+        <label htmlFor="cafe-website">{s.submit.honeypot}</label>
         <input
           id="cafe-website"
           type="text"
@@ -167,13 +165,10 @@ export default function SubmitForm() {
         disabled={state.phase === "submitting" || name.trim().length === 0 || location.trim().length === 0}
         className="w-full rounded-lg bg-copper-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-copper-700 disabled:opacity-50"
       >
-        {state.phase === "submitting" ? "Verifying with the concierge…" : "Submit for verification"}
+        {state.phase === "submitting" ? s.submit.submitting : s.submit.submit}
       </button>
       {state.phase === "submitting" && (
-        <p className="text-center text-xs text-coffee-400">
-          The concierge checks the web, looks for duplicates, and drafts a record. Usually 10–30
-          seconds — keep this tab open.
-        </p>
+        <p className="text-center text-xs text-coffee-400">{s.submit.submittingNote}</p>
       )}
     </form>
   )

@@ -18,6 +18,7 @@ const ConciergeRequestSchema = z.object({
     .min(1)
     .max(20),
   cafeContext: z.string().max(500).optional(),
+  locale: z.enum(["en", "el"]).optional(),
 })
 
 export async function POST(req: Request) {
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
       {
         history,
         ...(parsed.data.cafeContext !== undefined && { cafeContext: parsed.data.cafeContext }),
+        ...(parsed.data.locale !== undefined && { locale: parsed.data.locale }),
       },
     )
     return NextResponse.json({ content: res.content })

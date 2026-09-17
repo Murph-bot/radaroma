@@ -7,7 +7,9 @@
   "workers_dev": true,
   "routes": [
     { "pattern": "radaroma.com", "custom_domain": true },
-    { "pattern": "www.radaroma.com", "custom_domain": true }
+    { "pattern": "www.radaroma.com", "custom_domain": true },
+    { "pattern": "radaroma.gr", "custom_domain": true },
+    { "pattern": "www.radaroma.gr", "custom_domain": true }
   ],
   "assets": {
     "directory": ".open-next/assets",

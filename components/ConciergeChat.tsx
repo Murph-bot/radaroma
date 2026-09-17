@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react"
 import PentagonMark from "@/components/PentagonMark"
+import { t, type Locale } from "@/lib/i18n"
 
 interface ConciergeMessage {
   role: "user" | "assistant"
@@ -14,13 +15,17 @@ interface ConciergeChatProps {
   // Standalone card chrome (border + header). False when embedded in a
   // collapsible strip that already labels it.
   framed?: boolean
+  locale?: Locale
 }
 
 export default function ConciergeChat({
   cafeContext,
-  placeholder = "Ask the concierge — e.g. “quiet place to work near Exarchia?”",
+  placeholder,
   framed = true,
+  locale = "en",
 }: ConciergeChatProps) {
+  const s = t(locale)
+  const effectivePlaceholder = placeholder ?? s.concierge.placeholder
   const [messages, setMessages] = useState<ConciergeMessage[]>([])
   const [input, setInput] = useState("")
   const [busy, setBusy] = useState(false)
@@ -41,6 +46,7 @@ export default function ConciergeChat({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           messages: history,
+          locale,
           ...(cafeContext !== undefined && { cafeContext }),
         }),
       })
@@ -48,7 +54,7 @@ export default function ConciergeChat({
       if (!res.ok) throw new Error(data.error ?? `request failed (${res.status})`)
       setMessages([...history, { role: "assistant", content: data.content ?? "" }])
     } catch (e) {
-      setError(e instanceof Error ? e.message : "something went wrong")
+      setError(e instanceof Error ? e.message : s.concierge.genericError)
     } finally {
       setBusy(false)
       requestAnimationFrame(() => {
@@ -68,9 +74,9 @@ export default function ConciergeChat({
       {framed && (
         <div className="flex items-center gap-2 border-b border-coffee-200 bg-coffee-50 px-4 py-2.5">
           <PentagonMark className="h-4 w-4 text-copper-600" />
-          <span className="text-sm font-semibold text-coffee-800">Café Concierge</span>
+          <span className="text-sm font-semibold text-coffee-800">{s.concierge.title}</span>
           <span className="ml-auto text-[11px] text-coffee-400">
-            only recommends cafés in our dataset
+            {s.concierge.headerNote}
           </span>
         </div>
       )}
@@ -81,10 +87,7 @@ export default function ConciergeChat({
         className="max-h-72 min-h-24 space-y-3 overflow-y-auto px-4 py-3"
       >
         {messages.length === 0 && (
-          <p className="text-sm text-coffee-400">
-            Ask about the best espresso, a quiet corner to work from, or which café fits your
-            budget.
-          </p>
+          <p className="text-sm text-coffee-400">{s.concierge.empty}</p>
         )}
         {messages.map((m, i) => (
           <div
@@ -100,7 +103,7 @@ export default function ConciergeChat({
         ))}
         {busy && (
           <div className="max-w-[85%] rounded-lg bg-coffee-100 px-3 py-2 text-sm text-coffee-500">
-            Thinking…
+            {s.concierge.thinking}
           </div>
         )}
         {error && (
@@ -118,14 +121,14 @@ export default function ConciergeChat({
         }}
       >
         <label htmlFor="concierge-input" className="sr-only">
-          Message the concierge
+          {s.concierge.inputAria}
         </label>
         <input
           id="concierge-input"
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={placeholder}
+          placeholder={effectivePlaceholder}
           disabled={busy}
           className="w-full rounded-lg border border-coffee-300 px-3 py-2 text-sm outline-none focus:border-coffee-700 disabled:opacity-60"
         />
@@ -134,12 +137,11 @@ export default function ConciergeChat({
           disabled={busy || input.trim().length === 0}
           className="shrink-0 rounded-lg bg-copper-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-copper-700 disabled:opacity-40"
         >
-          Send
+          {s.concierge.send}
         </button>
       </form>
       <p className="border-t border-coffee-100 px-3 py-1.5 text-[11px] leading-snug text-coffee-400">
-        Answers are AI-generated (via OpenRouter) and can get details wrong — check the café
-        before you go.
+        {s.concierge.disclaimer}
       </p>
     </div>
   )

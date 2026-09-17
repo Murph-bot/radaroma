@@ -3,13 +3,14 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import PentagonMark from "@/components/PentagonMark"
+import { t, type Locale } from "@/lib/i18n"
 
 // Thumb-reach nav for small screens: Cafés / Compare / Ask / Submit.
 // "Ask" deep-links the concierge strip on the homepage.
 const items = [
   {
     href: "/cafes",
-    label: "Cafés",
+    key: "cafes" as const,
     match: (p: string) => p.startsWith("/cafes"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-5 w-5" aria-hidden="true">
@@ -20,7 +21,7 @@ const items = [
   },
   {
     href: "/compare",
-    label: "Compare",
+    key: "compare" as const,
     match: (p: string) => p.startsWith("/compare"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-5 w-5" aria-hidden="true">
@@ -31,13 +32,13 @@ const items = [
   },
   {
     href: "/#concierge",
-    label: "Ask",
+    key: "ask" as const,
     match: () => false,
     icon: <PentagonMark className="h-5 w-5" />,
   },
   {
     href: "/submit",
-    label: "Submit",
+    key: "submitShort" as const,
     match: (p: string) => p.startsWith("/submit"),
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-5 w-5" aria-hidden="true">
@@ -48,8 +49,9 @@ const items = [
   },
 ]
 
-export default function MobileNav() {
+export default function MobileNav({ locale = "en" }: { locale?: Locale }) {
   const pathname = usePathname()
+  const s = t(locale)
   return (
     <nav
       aria-label="Mobile"
@@ -67,7 +69,7 @@ export default function MobileNav() {
               }`}
             >
               {item.icon}
-              {item.label}
+              {s.nav[item.key]}
             </Link>
           )
         })}

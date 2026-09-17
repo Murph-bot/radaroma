@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
-import { AXIS_LABELS } from "@/lib/radar"
+import { t, type Locale } from "@/lib/i18n"
 import type { RankedCafe } from "@/lib/ranking"
 import { SCORE_AXES, type ScoreAxis } from "@/lib/schemas/score"
 
@@ -12,9 +12,11 @@ const MAX_COMPARE = 3
 interface ComparePickerProps {
   ranked: RankedCafe[]
   initialSlugs: string[]
+  locale?: Locale
 }
 
-export default function ComparePicker({ ranked, initialSlugs }: ComparePickerProps) {
+export default function ComparePicker({ ranked, initialSlugs, locale = "en" }: ComparePickerProps) {
+  const s = t(locale)
   const [selected, setSelected] = useState<string[]>(
     initialSlugs.filter((slug) => ranked.some((r) => r.cafe.slug === slug)).slice(0, MAX_COMPARE),
   )
@@ -78,18 +80,16 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
     <div className="space-y-8">
       <fieldset className="rounded-xl border border-coffee-200 bg-white p-4">
         <legend className="px-2 text-sm font-semibold text-coffee-700">
-          Pick 2–3 cafés ({selected.length}/{MAX_COMPARE})
+          {s.compare.pick(selected.length, MAX_COMPARE)}
         </legend>
         <div className="mb-2 flex items-center justify-between gap-3">
-          <p className="text-xs text-coffee-400">
-            The link updates as you pick — share it to show this overlay.
-          </p>
+          <p className="text-xs text-coffee-400">{s.compare.hint}</p>
           <button
             type="button"
             onClick={copyLink}
             className="shrink-0 rounded-lg border border-coffee-300 px-3 py-1.5 text-xs font-medium text-coffee-700 transition-colors duration-150 hover:bg-coffee-100"
           >
-            {copied ? "Copied" : "Copy link"}
+            {copied ? s.compare.copied : s.compare.copyLink}
           </button>
         </div>
         <div className="mt-2 space-y-3">
@@ -128,18 +128,18 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
 
       {chosen.length < 2 ? (
         <p className="rounded-xl border border-dashed border-coffee-300 p-10 text-center text-sm text-coffee-500">
-          Select at least two cafés to overlay their radar charts.
+          {s.compare.selectTwo}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div className="flex items-center justify-center rounded-xl border border-coffee-200 bg-white p-6">
-            <RadarChart series={chartSeries} size={300} className="text-coffee-800" />
+            <RadarChart series={chartSeries} size={300} className="text-coffee-800" locale={locale} />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-coffee-200 text-left">
-                  <th className="py-2 pr-4 font-medium text-coffee-500">Axis</th>
+                  <th className="py-2 pr-4 font-medium text-coffee-500">{s.compare.axis}</th>
                   {chosen.map((r) => (
                     <th key={r.cafe.id} className="py-2 pr-4 font-semibold text-coffee-800">
                       <Link href={`/cafes/${r.cafe.slug}`} className="hover:text-coffee-800">
@@ -152,7 +152,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
               <tbody>
                 {SCORE_AXES.map((axis: ScoreAxis) => (
                   <tr key={axis} className="border-b border-coffee-100">
-                    <td className="py-2 pr-4 text-coffee-600">{AXIS_LABELS[axis]}</td>
+                    <td className="py-2 pr-4 text-coffee-600">{s.axes[axis]}</td>
                     {chosen.map((r) => (
                       <td key={r.cafe.id} className="py-2 pr-4 tabular-nums text-coffee-800">
                         {r.score ? `${r.score[axis]} / 5` : "—"}
@@ -161,7 +161,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
                   </tr>
                 ))}
                 <tr>
-                  <td className="py-2 pr-4 font-medium text-coffee-600">Average</td>
+                  <td className="py-2 pr-4 font-medium text-coffee-600">{s.compare.average}</td>
                   {chosen.map((r) => (
                     <td key={r.cafe.id} className="py-2 pr-4 font-semibold tabular-nums text-coffee-900">
                       {r.rankScore !== null ? r.rankScore.toFixed(1) : "—"}

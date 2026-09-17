@@ -2,33 +2,28 @@
 
 import { useMemo, useState } from "react"
 import RankedCafeCard from "@/components/RankedCafeCard"
+import { t, type Locale } from "@/lib/i18n"
 import { MOODS, moodWeights, type MoodId } from "@/lib/moods"
-import { AXIS_LABELS } from "@/lib/radar"
 import { DEFAULT_WEIGHTS, rankCafes, type RankedCafe, type Weights } from "@/lib/ranking"
 import type { ScoreAxis } from "@/lib/schemas/score"
 
 const SLIDER_MAX = 2
 const SLIDER_STEP = 0.05
 
-const priceTiers = [
-  { value: "all", label: "Any price" },
-  { value: "1", label: "€" },
-  { value: "2", label: "€€" },
-  { value: "3", label: "€€€" },
-  { value: "4", label: "€€€€" },
-]
-
 interface CafeExplorerProps {
   ranked: RankedCafe[]
   showFilters?: boolean
   initialQuery?: string
+  locale?: Locale
 }
 
 export default function CafeExplorer({
   ranked,
   showFilters = true,
   initialQuery = "",
+  locale = "en",
 }: CafeExplorerProps) {
+  const s = t(locale)
   const [weights, setWeights] = useState<Weights>({ ...DEFAULT_WEIGHTS })
   const [activeMood, setActiveMood] = useState<MoodId | null>(null)
   const [neighborhood, setNeighborhood] = useState("all")
@@ -85,17 +80,17 @@ export default function CafeExplorer({
       <div className="rounded-xl border border-coffee-200 bg-white p-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-coffee-500">
-            Rank by what matters to you
+            {s.explorer.heading}
           </h2>
           <button
             type="button"
             onClick={handleReset}
             className="rounded-md px-2 py-1 text-xs font-medium text-coffee-500 transition-colors duration-150 hover:bg-coffee-200 hover:text-coffee-800"
           >
-            Reset
+            {s.explorer.reset}
           </button>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Mood presets">
+        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={s.explorer.moodsAria}>
           {MOODS.map((mood) => (
             <button
               key={mood.id}
@@ -108,15 +103,15 @@ export default function CafeExplorer({
                   : "border-coffee-300 bg-white text-coffee-700 hover:border-copper-500/60 hover:text-coffee-900"
               }`}
             >
-              {mood.label}
+              {s.moods[mood.id]}
             </button>
           ))}
         </div>
         <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-5">
-          {(Object.keys(AXIS_LABELS) as ScoreAxis[]).map((axis) => (
+          {(Object.keys(s.axes) as ScoreAxis[]).map((axis) => (
             <label key={axis} className="block">
               <span className="flex items-center justify-between text-sm text-coffee-700">
-                <span>{AXIS_LABELS[axis]}</span>
+                <span>{s.axes[axis]}</span>
                 <span className="text-xs tabular-nums text-coffee-400">
                   {weights[axis].toFixed(2)}×
                 </span>
@@ -128,7 +123,7 @@ export default function CafeExplorer({
                 step={SLIDER_STEP}
                 value={weights[axis]}
                 onChange={(e) => handleWeightChange(axis, Number(e.target.value))}
-                aria-label={`${AXIS_LABELS[axis]} importance`}
+                aria-label={s.explorer.sliderAria(s.axes[axis])}
                 className="mt-1 w-full accent-copper-600"
               />
             </label>
@@ -137,13 +132,13 @@ export default function CafeExplorer({
         {showFilters && (
           <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-coffee-200 pt-3">
             <label className="flex items-center gap-2 text-sm text-coffee-700">
-              <span>Neighborhood</span>
+              <span>{s.explorer.neighborhood}</span>
               <select
                 value={neighborhood}
                 onChange={(e) => setNeighborhood(e.target.value)}
                 className="rounded-md border border-coffee-300 bg-white px-2 py-1 text-sm"
               >
-                <option value="all">All</option>
+                <option value="all">{s.explorer.all}</option>
                 {neighborhoods.map((n) => (
                   <option key={n} value={n}>
                     {n}
@@ -152,31 +147,31 @@ export default function CafeExplorer({
               </select>
             </label>
             <label className="flex items-center gap-2 text-sm text-coffee-700">
-              <span>Price</span>
+              <span>{s.explorer.price}</span>
               <select
                 value={priceTier}
                 onChange={(e) => setPriceTier(e.target.value)}
                 className="rounded-md border border-coffee-300 bg-white px-2 py-1 text-sm"
               >
-                {priceTiers.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
+                <option value="all">{s.explorer.anyPrice}</option>
+                <option value="1">€</option>
+                <option value="2">€€</option>
+                <option value="3">€€€</option>
+                <option value="4">€€€€</option>
               </select>
             </label>
             <label className="flex items-center gap-2 text-sm text-coffee-700">
-              <span>Search</span>
+              <span>{s.explorer.search}</span>
               <input
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Café name…"
+                placeholder={s.explorer.searchPlaceholder}
                 className="rounded-md border border-coffee-300 bg-white px-2 py-1 text-sm"
               />
             </label>
             <span className="ml-auto text-xs text-coffee-400">
-              {list.length} of {ranked.length} cafés
+              {s.explorer.count(list.length, ranked.length)}
             </span>
           </div>
         )}
@@ -184,10 +179,12 @@ export default function CafeExplorer({
       <div className="space-y-3">
         {list.length === 0 ? (
           <p className="rounded-xl border border-dashed border-coffee-300 p-8 text-center text-sm text-coffee-500">
-            No cafés match these filters.
+            {s.explorer.empty}
           </p>
         ) : (
-          list.map((r) => <RankedCafeCard key={r.cafe.id} ranked={r} weights={weights} />)
+          list.map((r) => (
+            <RankedCafeCard key={r.cafe.id} ranked={r} weights={weights} locale={locale} />
+          ))
         )}
       </div>
     </div>

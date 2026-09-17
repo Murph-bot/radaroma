@@ -1,24 +1,23 @@
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import SubmitForm from "@/components/SubmitForm"
+import { localeFromHost, t } from "@/lib/i18n"
 
-export const metadata: Metadata = {
-  title: "Submit a café",
-  description:
-    "Know a great Attica café that's missing? Submit it — an AI concierge verifies it's real and checks for duplicates before it goes live.",
+export async function generateMetadata(): Promise<Metadata> {
+  const s = t(localeFromHost((await headers()).get("host")))
+  return { title: s.meta.submit.title, description: s.meta.submit.description }
 }
 
-export default function SubmitPage() {
+export default async function SubmitPage() {
+  const locale = localeFromHost((await headers()).get("host"))
+  const s = t(locale)
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-coffee-900">Submit a café</h1>
-        <p className="mt-2 text-sm text-coffee-600">
-          Know a spot that belongs here? Submit it and our concierge will verify the café is real,
-          check for duplicates, and draft its profile. Nothing goes live without verification —
-          community picks get a badge so you know they weren&apos;t hand-curated.
-        </p>
+        <h1 className="text-2xl font-bold text-coffee-900">{s.submit.title}</h1>
+        <p className="mt-2 text-sm text-coffee-600">{s.submit.intro}</p>
       </div>
-      <SubmitForm />
+      <SubmitForm locale={locale} />
     </div>
   )
 }

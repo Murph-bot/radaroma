@@ -285,10 +285,10 @@ export interface ConciergeMessage {
 
 export async function runConcierge(
   deps: AgentDeps,
-  input: { history: ConciergeMessage[]; cafeContext?: string },
+  input: { history: ConciergeMessage[]; cafeContext?: string; locale?: "en" | "el" },
 ): Promise<{ content: string }> {
   const loop = await runToolLoop(deps, {
-    system: conciergeSystemPrompt(input.cafeContext),
+    system: conciergeSystemPrompt(input.cafeContext, input.locale),
     userMessages: input.history.map((m) => ({ role: m.role, content: m.content })),
     toolNames: ["queryCafesByWeights"],
   })

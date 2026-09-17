@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  AXIS_LABELS,
   axisLabelsVisible,
   axisPoints,
   MAX_SCORE,
@@ -9,6 +8,7 @@ import {
   ringPoints,
   toSvgPoints,
 } from "@/lib/radar"
+import { t, type Locale } from "@/lib/i18n"
 import type { ScoreAxis } from "@/lib/schemas/score"
 
 const VIEWBOX = 220
@@ -32,6 +32,7 @@ interface RadarChartProps {
   showLegend?: boolean
   showAxisLabels?: boolean
   className?: string
+  locale?: Locale
 }
 
 export default function RadarChart({
@@ -40,7 +41,9 @@ export default function RadarChart({
   showLegend = true,
   showAxisLabels,
   className = "",
+  locale = "en",
 }: RadarChartProps) {
+  const AXIS_LABELS = t(locale).axes
   const labelsVisible = axisLabelsVisible(size, showAxisLabels)
   const axes = Object.keys(AXIS_LABELS) as ScoreAxis[]
   const n = axes.length

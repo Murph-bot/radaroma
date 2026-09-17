@@ -1,14 +1,15 @@
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import ConciergeChat from "@/components/ConciergeChat"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
-import { bestForChips, BEST_FOR_LABELS } from "@/lib/bestFor"
+import { bestForChips } from "@/lib/bestFor"
 import { curatorBlurb } from "@/lib/blurb"
 import { farthestPartner } from "@/lib/compare"
+import { localeFromHost, t } from "@/lib/i18n"
 import { getPublicCafe, getPublicCafes } from "@/lib/queries/publicCafes"
 import { priceTierLabel } from "@/lib/price"
-import { AXIS_LABELS } from "@/lib/radar"
 import { SCORE_AXES, type ScoreAxis } from "@/lib/schemas/score"
 
 export const dynamic = "force-dynamic"
@@ -34,20 +35,29 @@ export default async function CafeDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const [ranked, allRanked] = await Promise.all([getPublicCafe(slug), getPublicCafes()])
+  const [ranked, allRanked, headerList] = await Promise.all([
+    getPublicCafe(slug),
+    getPublicCafes(),
+    headers(),
+  ])
   if (!ranked) notFound()
+  const locale = localeFromHost(headerList.get("host"))
+  const s = t(locale)
 
   const { cafe, score } = ranked
   const isCommunity = cafe.source === "public_submission"
   const blurb = curatorBlurb(cafe.verificationNotes)
   const chips = score ? bestForChips(score) : []
   const partner = score ? farthestPartner(allRanked, slug) : null
+  const partnerName = partner
+    ? (allRanked.find((r) => r.cafe.slug === partner)?.cafe.name ?? null)
+    : null
   const compareHref = partner ? `/compare?cafes=${slug},${partner}` : "/compare"
 
   return (
     <div className="space-y-8">
       <Link href="/cafes" className="text-sm font-medium text-coffee-500 hover:text-coffee-800">
-        ← All cafés
+        {s.detail.allCafes}
       </Link>
 
       <header className="space-y-2">
@@ -55,7 +65,7 @@ export default async function CafeDetailPage({
           <h1 className="font-display text-3xl font-medium tracking-tight text-coffee-900">{cafe.name}</h1>
           {isCommunity && (
             <span className="rounded border border-copper-500/50 bg-copper-100 px-2 py-1 text-xs font-medium text-copper-700">
-              community-submitted, AI-verified
+              {s.card.community}
             </span>
           )}
         </div>
@@ -71,13 +81,13 @@ export default async function CafeDetailPage({
           {cafe.address}
         </a>
         {chips.length > 0 && (
-          <ul className="flex flex-wrap gap-2 pt-1" aria-label="Best for">
+          <ul className="flex flex-wrap gap-2 pt-1" aria-label={s.detail.bestFor}>
             {chips.map((chip) => (
               <li
                 key={chip}
                 className="rounded-full border border-coffee-300 px-3 py-1 text-xs font-medium text-coffee-700"
               >
-                {BEST_FOR_LABELS[chip]}
+                {s.bestFor[chip]}
               </li>
             ))}
           </ul>
@@ -87,7 +97,7 @@ export default async function CafeDetailPage({
             href={compareHref}
             className="inline-block rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-700 transition-colors duration-150 hover:bg-coffee-100"
           >
-            Compare it{partner ? ` with ${allRanked.find((r) => r.cafe.slug === partner)?.cafe.name ?? ""}` : ""} →
+            {s.detail.compareWith(partnerName)}
           </Link>
         </div>
       </header>
@@ -112,24 +122,25 @@ export default async function CafeDetailPage({
               ]}
               size={280}
               className="text-coffee-800"
+              locale={locale}
             />
           </div>
         ) : (
           <div className="flex items-center justify-center rounded-xl border border-dashed border-coffee-300 p-10 text-sm text-coffee-400">
-            No scores yet — coming soon.
+            {s.detail.noScores}
           </div>
         )}
 
         <div className="space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-coffee-500">
-            Score breakdown
+            {s.detail.scoreBreakdown}
           </h2>
           {score ? (
             <div className="space-y-3">
               {SCORE_AXES.map((axis: ScoreAxis) => (
                 <div key={axis}>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-coffee-700">{AXIS_LABELS[axis]}</span>
+                    <span className="text-coffee-700">{s.axes[axis]}</span>
                     <span className="tabular-nums text-coffee-500">{score[axis]} / 5</span>
                   </div>
                   <div className="mt-1 h-2 overflow-hidden rounded-full bg-coffee-100">
@@ -147,23 +158,22 @@ export default async function CafeDetailPage({
               )}
             </div>
           ) : (
-            <p className="text-sm text-coffee-500">Not scored yet.</p>
+            <p className="text-sm text-coffee-500">{s.detail.notScored}</p>
           )}
         </div>
       </div>
 
       <section>
-        <h2 className="mb-1 text-xl font-semibold text-coffee-900">Ask about this café</h2>
-        <p className="mb-4 text-sm text-coffee-500">
-          Questions about {cafe.name}? The concierge knows its profile.
-        </p>
+        <h2 className="mb-1 text-xl font-semibold text-coffee-900">{s.detail.askTitle}</h2>
+        <p className="mb-4 text-sm text-coffee-500">{s.detail.askSub(cafe.name)}</p>
         <ConciergeChat
+          locale={locale}
           cafeContext={
             score
               ? `${cafe.name} (${cafe.neighborhood}, ${priceTierLabel(cafe.priceTier)} tier). Scores: Quality ${score.quality}/5, Value ${score.priceValue}/5, Work ${score.workFriendliness}/5, Quiet ${score.quietVibe}/5, Specialty ${score.specialtyDepth}/5.`
               : `${cafe.name} (${cafe.neighborhood}, ${priceTierLabel(cafe.priceTier)} tier). No scores yet.`
           }
-          placeholder={`Ask about ${cafe.name}…`}
+          placeholder={s.detail.askPlaceholder(cafe.name)}
         />
       </section>
     </div>
