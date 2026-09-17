@@ -59,6 +59,17 @@ describe("ScoreRepository", () => {
     expect(created.scoresReviewedAt).toBeNull()
   })
 
+  it("findReviewedForCafe(s) exclude drafts and include reviewed rows", async () => {
+    await repo.upsertCurator(CAFE_ID, scoreInput)
+    expect(await repo.findReviewedForCafe(CAFE_ID)).toBeNull()
+    expect((await repo.findReviewedForCafes([CAFE_ID])).size).toBe(0)
+    expect((await repo.findForCafes([CAFE_ID])).size).toBe(1)
+
+    await repo.upsertCurator(CAFE_ID, scoreInput, { reviewed: true })
+    expect((await repo.findReviewedForCafe(CAFE_ID))?.quality).toBe(4)
+    expect((await repo.findReviewedForCafes([CAFE_ID])).get(CAFE_ID)?.quality).toBe(4)
+  })
+
   it("reviewed: true sets scores_reviewed_at; reviewed: false clears it", async () => {
     const reviewed = await repo.upsertCurator(CAFE_ID, scoreInput, { reviewed: true })
     expect(reviewed.scoresReviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)

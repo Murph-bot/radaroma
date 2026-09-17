@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useId, useRef, useState } from "react"
 import PentagonMark from "@/components/PentagonMark"
 import { t, type Locale } from "@/lib/i18n"
 
@@ -31,6 +31,8 @@ export default function ConciergeChat({
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  // Several instances can be mounted at once (mobile strip + desktop rail).
+  const inputId = useId()
 
   const handleSend = async () => {
     const text = input.trim()
@@ -120,11 +122,11 @@ export default function ConciergeChat({
           void handleSend()
         }}
       >
-        <label htmlFor="concierge-input" className="sr-only">
+        <label htmlFor={inputId} className="sr-only">
           {s.concierge.inputAria}
         </label>
         <input
-          id="concierge-input"
+          id={inputId}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}

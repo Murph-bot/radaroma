@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useLayoutEffect, useMemo, useRef, useState } from "react"
 import RankedCafeCard from "@/components/RankedCafeCard"
 import { t, type Locale } from "@/lib/i18n"
 import { MOODS, moodWeights, type MoodId } from "@/lib/moods"
@@ -9,6 +9,36 @@ import type { ScoreAxis } from "@/lib/schemas/score"
 
 const SLIDER_MAX = 2
 const SLIDER_STEP = 0.05
+const REORDER_MS = 260
+
+// FLIP: when the order changes, start each card at its previous offset and
+// let it slide to the new slot, so a slider nudge reads as a re-rank rather
+// than a flicker.
+function useSoftReorder(order: string[]) {
+  const container = useRef<HTMLDivElement>(null)
+  const previous = useRef(new Map<string, number>())
+  useLayoutEffect(() => {
+    const root = container.current
+    if (!root) return
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    const next = new Map<string, number>()
+    for (const el of root.querySelectorAll<HTMLElement>("[data-cafe-id]")) {
+      const id = el.dataset.cafeId ?? ""
+      const top = el.getBoundingClientRect().top
+      next.set(id, top)
+      const before = previous.current.get(id)
+      if (before === undefined || reduced) continue
+      const delta = before - top
+      if (Math.abs(delta) < 1) continue
+      el.animate(
+        [{ transform: `translateY(${delta}px)` }, { transform: "translateY(0)" }],
+        { duration: REORDER_MS, easing: "cubic-bezier(0.2, 0.7, 0.2, 1)" },
+      )
+    }
+    previous.current = next
+  }, [order])
+  return container
+}
 
 interface CafeExplorerProps {
   ranked: RankedCafe[]
@@ -74,12 +104,14 @@ export default function CafeExplorer({
   }
 
   const list = visible
+  const order = useMemo(() => list.map((r) => r.cafe.id), [list])
+  const listRef = useSoftReorder(order)
 
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-coffee-200 bg-white p-4">
         <div className="flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-coffee-500">
+          <h2 className="font-display text-lg font-medium text-coffee-900">
             {s.explorer.heading}
           </h2>
           <button
@@ -112,7 +144,11 @@ export default function CafeExplorer({
             <label key={axis} className="block">
               <span className="flex items-center justify-between text-sm text-coffee-700">
                 <span>{s.axes[axis]}</span>
-                <span className="text-xs tabular-nums text-coffee-400">
+                <span
+                  className={`rounded px-1 text-xs font-medium tabular-nums transition-colors duration-200 ${
+                    weights[axis] === DEFAULT_WEIGHTS[axis] ? "text-coffee-600" : "bg-copper-100 text-copper-700"
+                  }`}
+                >
                   {weights[axis].toFixed(2)}×
                 </span>
               </span>
@@ -170,20 +206,22 @@ export default function CafeExplorer({
                 className="rounded-md border border-coffee-300 bg-white px-2 py-1 text-sm"
               />
             </label>
-            <span className="ml-auto text-xs text-coffee-400">
+            <span className="ml-auto text-xs text-coffee-600">
               {s.explorer.count(list.length, ranked.length)}
             </span>
           </div>
         )}
       </div>
-      <div className="space-y-3">
+      <div ref={listRef} className="space-y-3 pl-2 pt-2">
         {list.length === 0 ? (
           <p className="rounded-xl border border-dashed border-coffee-300 p-8 text-center text-sm text-coffee-500">
             {s.explorer.empty}
           </p>
         ) : (
-          list.map((r) => (
-            <RankedCafeCard key={r.cafe.id} ranked={r} weights={weights} locale={locale} />
+          list.map((r, i) => (
+            <div key={r.cafe.id} data-cafe-id={r.cafe.id}>
+              <RankedCafeCard ranked={r} weights={weights} rank={i + 1} locale={locale} />
+            </div>
           ))
         )}
       </div>

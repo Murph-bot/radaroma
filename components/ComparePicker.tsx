@@ -95,7 +95,7 @@ export default function ComparePicker({ ranked, initialSlugs, locale = "en" }: C
         <div className="mt-2 space-y-3">
           {groups.map(([neighborhood, cafés]) => (
             <div key={neighborhood}>
-              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-coffee-400">
+              <p className="px-3 pb-1 text-xs font-semibold text-coffee-600">
                 {neighborhood}
               </p>
               <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">

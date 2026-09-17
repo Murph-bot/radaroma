@@ -42,6 +42,8 @@ export async function promoteRecord(
     confidenceScore: input.confidenceScore,
     verificationNotes: input.verificationNotes,
   })
-  await scores.upsertCurator(cafe.id, input.scores ?? input.record.scores)
+  // LLM/pipeline numbers are drafts: they stay out of public ranking until an
+  // admin marks them reviewed.
+  await scores.upsertCurator(cafe.id, input.scores ?? input.record.scores, { reviewed: false })
   return cafe
 }

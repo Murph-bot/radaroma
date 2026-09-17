@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest"
 import { CafeRepository } from "@/lib/db/repositories/cafes"
+import { ScoreRepository } from "@/lib/db/repositories/scores"
 import { createTestDb } from "@/lib/db/repositories/test-db"
 import type { SqlDb } from "@/lib/db/sql"
 import { promoteRecord } from "./promote"
@@ -37,6 +38,20 @@ describe("promoteRecord", () => {
     const scores = await db.get("select * from cafe_scores where cafe_id = ?", [cafe.id])
     expect(scores?.quality).toBe(4)
     expect(scores?.specialty_depth).toBe(4)
+  })
+
+  it("leaves promoted scores unreviewed so they stay out of public ranking", async () => {
+    const cafe = await promoteRecord(db, {
+      record,
+      source: "public_submission",
+      confidenceScore: 0.9,
+      verificationNotes: null,
+    })
+    const scores = new ScoreRepository(db)
+    const saved = await scores.findForCafe(cafe.id)
+    expect(saved?.scoresReviewedAt).toBeNull()
+    expect(await scores.findReviewedForCafe(cafe.id)).toBeNull()
+    expect((await scores.findReviewedForCafes([cafe.id])).size).toBe(0)
   })
 
   it("prefers explicit score overrides", async () => {

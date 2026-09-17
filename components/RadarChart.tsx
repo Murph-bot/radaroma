@@ -6,6 +6,7 @@ import {
   MAX_SCORE,
   polygonPoints,
   ringPoints,
+  SERIES_COLORS,
   toSvgPoints,
 } from "@/lib/radar"
 import { t, type Locale } from "@/lib/i18n"
@@ -15,9 +16,12 @@ const VIEWBOX = 220
 const CENTER = VIEWBOX / 2
 const RADIUS = 68
 const LABEL_OFFSET = 16
+// Without axis words the label gutter is dead space: crop the viewBox so
+// the silhouette fills the box (list cards read at a glance).
+const COMPACT_PAD = 6
+const COMPACT_VIEWBOX = `${CENTER - RADIUS - COMPACT_PAD} ${CENTER - RADIUS - COMPACT_PAD} ${2 * (RADIUS + COMPACT_PAD)} ${2 * (RADIUS + COMPACT_PAD)}`
 
-// Zine palette: copper / sage / wine. Compare caps at three series.
-export const SERIES_COLORS = ["#b5683a", "#6f7f68", "#7a4a55"]
+export { SERIES_COLORS }
 
 export interface RadarSeries {
   id: string
@@ -48,6 +52,7 @@ export default function RadarChart({
   const axes = Object.keys(AXIS_LABELS) as ScoreAxis[]
   const n = axes.length
   const axisVerts = axisPoints(n, RADIUS, CENTER, CENTER)
+  const compact = !labelsVisible
   const summary = series
     .map(
       (s) =>
@@ -64,11 +69,12 @@ export default function RadarChart({
       aria-label={`Radar chart: ${summary}`}
     >
       <svg
-        viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
+        viewBox={compact ? COMPACT_VIEWBOX : `0 0 ${VIEWBOX} ${VIEWBOX}`}
         width={size}
         height={size}
         className="select-none"
       >
+        {compact && <title>{summary}</title>}
         {/* score rings 1-5 */}
         {[1, 2, 3, 4, 5].map((ring) => (
           <polygon
@@ -76,8 +82,8 @@ export default function RadarChart({
             points={toSvgPoints(ringPoints(ring, n, RADIUS, CENTER, CENTER))}
             fill="none"
             stroke="currentColor"
-            strokeOpacity={ring === MAX_SCORE ? 0.35 : 0.12}
-            strokeWidth={ring === MAX_SCORE ? 1.2 : 0.8}
+            strokeOpacity={ring === MAX_SCORE ? 0.45 : compact ? 0.18 : 0.12}
+            strokeWidth={ring === MAX_SCORE ? 1.4 : 0.8}
           />
         ))}
         {/* axis lines */}
@@ -89,9 +95,13 @@ export default function RadarChart({
             x2={p.x}
             y2={p.y}
             stroke="currentColor"
-            strokeOpacity={0.15}
+            strokeOpacity={compact ? 0.25 : 0.15}
             strokeWidth={0.8}
           />
+        ))}
+        {/* compact: axis ticks stand in for the hidden words */}
+        {compact && axisVerts.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r={2.2} fill="currentColor" fillOpacity={0.5} />
         ))}
         {/* axis labels — hidden below AXIS_LABEL_MIN_SIZE unless overridden */}
         {labelsVisible && axisVerts.map((p, i) => (
@@ -114,9 +124,9 @@ export default function RadarChart({
               polygonPoints(axes.map((a) => s.values[a]), RADIUS, CENTER, CENTER),
             )}
             fill={s.color}
-            fillOpacity={0.25}
+            fillOpacity={compact ? 0.38 : 0.25}
             stroke={s.color}
-            strokeWidth={2}
+            strokeWidth={compact ? 2.6 : 2}
             strokeLinejoin="round"
             className="transition-[points] duration-200"
           />

@@ -27,7 +27,7 @@ async function seed(db: SqlDb) {
     workFriendliness: 3,
     quietVibe: 3,
     specialtyDepth: 5,
-  })
+  }, { reviewed: true })
   const b = await cafes.create({
     slug: "beta",
     name: "Beta Coffee",
@@ -47,7 +47,7 @@ async function seed(db: SqlDb) {
     workFriendliness: 4,
     quietVibe: 3,
     specialtyDepth: 3,
-  })
+  }, { reviewed: true })
 }
 
 describe("searchWeb", () => {
@@ -164,6 +164,40 @@ describe("queryCafesByWeights", () => {
     // Alpha (5,3,3,3,5) avg 3.8 > Beta (3,4,4,3,3) avg 3.4
     expect(res.cafes[0].name).toBe("Alpha Coffee")
     expect(res.cafes).toHaveLength(2)
+  })
+
+  it("never lets draft (unreviewed) scores influence the ranking", async () => {
+    const db = createTestDb()
+    await seed(db)
+    const cafes = new CafeRepository(db)
+    const scores = new ScoreRepository(db)
+    const c = await cafes.create({
+      slug: "gamma",
+      name: "Gamma Coffee",
+      address: "G 1",
+      lat: null,
+      lng: null,
+      neighborhood: null,
+      priceTier: 2,
+      source: "public_submission",
+      status: "verified",
+      confidenceScore: null,
+      verificationNotes: null,
+    })
+    await scores.upsertCurator(c.id, {
+      quality: 5,
+      priceValue: 5,
+      workFriendliness: 5,
+      quietVibe: 5,
+      specialtyDepth: 5,
+    })
+    const res = (await AGENT_TOOLS.queryCafesByWeights.execute({ limit: 10 }, { db })) as {
+      cafes: { name: string; rankScore: number | null; axes: unknown }[]
+    }
+    expect(res.cafes.map((c) => c.name)).toEqual(["Alpha Coffee", "Beta Coffee", "Gamma Coffee"])
+    const gamma = res.cafes[2]
+    expect(gamma.rankScore).toBeNull()
+    expect(gamma.axes).toBeNull()
   })
 })
 

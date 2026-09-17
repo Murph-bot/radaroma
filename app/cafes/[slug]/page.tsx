@@ -3,7 +3,8 @@ import { headers } from "next/headers"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import ConciergeChat from "@/components/ConciergeChat"
-import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
+import RadarChart from "@/components/RadarChart"
+import { SERIES_COLORS } from "@/lib/radar"
 import { bestForChips } from "@/lib/bestFor"
 import { curatorBlurb } from "@/lib/blurb"
 import { farthestPartner } from "@/lib/compare"
@@ -132,7 +133,7 @@ export default async function CafeDetailPage({
         )}
 
         <div className="space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-coffee-500">
+          <h2 className="font-display text-lg font-medium text-coffee-900">
             {s.detail.scoreBreakdown}
           </h2>
           {score ? (
