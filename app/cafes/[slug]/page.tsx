@@ -3,7 +3,8 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import ConciergeChat from "@/components/ConciergeChat"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
-import { getPublicCafe } from "@/lib/queries/publicCafes"
+import { farthestPartner } from "@/lib/compare"
+import { getPublicCafe, getPublicCafes } from "@/lib/queries/publicCafes"
 import { priceTierLabel } from "@/lib/price"
 import { AXIS_LABELS } from "@/lib/radar"
 import { SCORE_AXES, type ScoreAxis } from "@/lib/schemas/score"
@@ -31,11 +32,13 @@ export default async function CafeDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const ranked = await getPublicCafe(slug)
+  const [ranked, allRanked] = await Promise.all([getPublicCafe(slug), getPublicCafes()])
   if (!ranked) notFound()
 
   const { cafe, score } = ranked
   const isCommunity = cafe.source === "public_submission"
+  const partner = score ? farthestPartner(allRanked, slug) : null
+  const compareHref = partner ? `/compare?cafes=${slug},${partner}` : "/compare"
 
   return (
     <div className="space-y-8">
@@ -56,6 +59,14 @@ export default async function CafeDetailPage({
           {cafe.neighborhood} · {priceTierLabel(cafe.priceTier)}
         </p>
         <p className="text-sm text-coffee-500">{cafe.address}</p>
+        <div className="pt-1">
+          <Link
+            href={compareHref}
+            className="inline-block rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-700 transition hover:bg-coffee-100"
+          >
+            Compare it{partner ? ` with ${allRanked.find((r) => r.cafe.slug === partner)?.cafe.name ?? ""}` : ""} →
+          </Link>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
 import { AXIS_LABELS } from "@/lib/radar"
@@ -18,6 +18,14 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
   const [selected, setSelected] = useState<string[]>(
     initialSlugs.filter((slug) => ranked.some((r) => r.cafe.slug === slug)).slice(0, MAX_COMPARE),
   )
+  const [copied, setCopied] = useState(false)
+
+  // The URL stays the source of truth: keep ?cafes= in sync so a refresh or a
+  // pasted link restores the same overlay. replaceState avoids a server trip.
+  useEffect(() => {
+    const qs = selected.length ? `?cafes=${selected.join(",")}` : ""
+    window.history.replaceState(null, "", `/compare${qs}`)
+  }, [selected])
 
   const handleToggle = (slug: string) => {
     setSelected((current) => {
@@ -26,6 +34,25 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
       return [...current, slug]
     })
   }
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopied(false)
+    }
+  }
+
+  const groups = useMemo(() => {
+    const map = new Map<string, RankedCafe[]>()
+    for (const r of ranked) {
+      const neighborhood = r.cafe.neighborhood ?? "Other"
+      map.set(neighborhood, [...(map.get(neighborhood) ?? []), r])
+    }
+    return [...map.entries()]
+  }, [ranked])
 
   const chosen = useMemo(
     () => selected.map((slug) => ranked.find((r) => r.cafe.slug === slug)).filter((r): r is RankedCafe => Boolean(r)),
@@ -53,31 +80,49 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
         <legend className="px-2 text-sm font-semibold text-coffee-700">
           Pick 2–3 cafés ({selected.length}/{MAX_COMPARE})
         </legend>
-        <div className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
-          {ranked.map((r) => {
-            const checked = selected.includes(r.cafe.slug)
-            const disabled = !checked && selected.length >= MAX_COMPARE
-            return (
-              <label
-                key={r.cafe.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
-                  checked ? "bg-coffee-100 text-coffee-900" : "hover:bg-coffee-100"
-                } ${disabled ? "cursor-not-allowed opacity-40" : ""}`}
-              >
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => handleToggle(r.cafe.slug)}
-                  className="accent-coffee-700"
-                />
-                <span className="truncate">{r.cafe.name}</span>
-                <span className="ml-auto shrink-0 text-xs text-coffee-400">
-                  {r.cafe.neighborhood}
-                </span>
-              </label>
-            )
-          })}
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <p className="text-xs text-coffee-400">
+            The link updates as you pick — share it to show this overlay.
+          </p>
+          <button
+            type="button"
+            onClick={copyLink}
+            className="shrink-0 rounded-lg border border-coffee-300 px-3 py-1.5 text-xs font-medium text-coffee-700 transition hover:bg-coffee-100"
+          >
+            {copied ? "Copied" : "Copy link"}
+          </button>
+        </div>
+        <div className="mt-2 space-y-3">
+          {groups.map(([neighborhood, cafés]) => (
+            <div key={neighborhood}>
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-coffee-400">
+                {neighborhood}
+              </p>
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
+                {cafés.map((r) => {
+                  const checked = selected.includes(r.cafe.slug)
+                  const disabled = !checked && selected.length >= MAX_COMPARE
+                  return (
+                    <label
+                      key={r.cafe.id}
+                      className={`flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
+                        checked ? "bg-coffee-100 text-coffee-900" : "hover:bg-coffee-100"
+                      } ${disabled ? "cursor-not-allowed opacity-40" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={disabled}
+                        onChange={() => handleToggle(r.cafe.slug)}
+                        className="accent-coffee-700"
+                      />
+                      <span className="truncate">{r.cafe.name}</span>
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </fieldset>
 

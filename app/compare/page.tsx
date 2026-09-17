@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import ComparePicker from "@/components/ComparePicker"
+import { defaultCompareSlugs } from "@/lib/compare"
 import { getPublicCafes } from "@/lib/queries/publicCafes"
 
 export const dynamic = "force-dynamic"
@@ -15,7 +16,7 @@ export default async function ComparePage({
   searchParams: Promise<{ cafes?: string }>
 }) {
   const [{ cafes }, ranked] = await Promise.all([searchParams, getPublicCafes()])
-  const initialSlugs = (cafes ?? "").split(",").filter(Boolean)
+  const initialSlugs = defaultCompareSlugs(ranked, (cafes ?? "").split(",").filter(Boolean))
 
   return (
     <div className="space-y-6">
