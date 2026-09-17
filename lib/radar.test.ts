@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   axisAngle,
+  axisLabelsVisible,
   axisPoints,
   MAX_SCORE,
   polygonPoints,
@@ -67,5 +68,20 @@ describe("axisPoints / ringPoints", () => {
 describe("toSvgPoints", () => {
   it("formats as x,y pairs", () => {
     expect(toSvgPoints([{ x: 1.5, y: 2.25 }])).toBe("1.50,2.25")
+  })
+})
+
+describe("axisLabelsVisible", () => {
+  it("hides labels on card-sized charts", () => {
+    expect(axisLabelsVisible(96)).toBe(false)
+  })
+
+  it("shows labels on detail/compare charts", () => {
+    expect(axisLabelsVisible(280)).toBe(true)
+  })
+
+  it("honors an explicit override", () => {
+    expect(axisLabelsVisible(96, true)).toBe(true)
+    expect(axisLabelsVisible(280, false)).toBe(false)
   })
 })

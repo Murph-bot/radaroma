@@ -1,17 +1,11 @@
 // Weighted ranking: the single source of truth for "how should the list be
 // ordered". Used by the UI sliders AND the agent's queryCafesByWeights tool.
 import type { Cafe } from "@/lib/schemas/cafe"
-import type { CafeScore, ScoreAxis } from "@/lib/schemas/score"
+import { SCORE_AXES, type CafeScore, type ScoreAxis } from "@/lib/schemas/score"
+
+export { SCORE_AXES }
 
 export type Weights = Record<ScoreAxis, number>
-
-export const SCORE_AXES: ScoreAxis[] = [
-  "quality",
-  "priceValue",
-  "workFriendliness",
-  "quietVibe",
-  "specialtyDepth",
-]
 
 export const DEFAULT_WEIGHTS: Weights = {
   quality: 1,

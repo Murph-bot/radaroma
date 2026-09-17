@@ -123,3 +123,11 @@ describe("formatMatchLabel", () => {
     expect(formatMatchLabel(null, laptop)).toBeNull()
   })
 })
+
+describe("SCORE_AXES", () => {
+  it("does not drift from the schema axis list", async () => {
+    const { SCORE_AXES: rankingAxes } = await import("./ranking")
+    const { SCORE_AXES: schemaAxes } = await import("@/lib/schemas/score")
+    expect([...rankingAxes]).toEqual([...schemaAxes])
+  })
+})

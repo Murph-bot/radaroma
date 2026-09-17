@@ -11,6 +11,13 @@ export const AXIS_LABELS: Record<ScoreAxis, string> = {
 
 export const MAX_SCORE = 5
 
+// Axis words collide under ~140px — cards render the silhouette only.
+// `showLabels` overrides the size heuristic when a caller knows better.
+export const AXIS_LABEL_MIN_SIZE = 140
+export function axisLabelsVisible(size: number, showLabels?: boolean): boolean {
+  return showLabels ?? size >= AXIS_LABEL_MIN_SIZE
+}
+
 export interface RadarPoint {
   x: number
   y: number

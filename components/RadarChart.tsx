@@ -2,6 +2,7 @@
 
 import {
   AXIS_LABELS,
+  axisLabelsVisible,
   axisPoints,
   MAX_SCORE,
   polygonPoints,
@@ -30,6 +31,7 @@ interface RadarChartProps {
   series: RadarSeries[]
   size?: number
   showLegend?: boolean
+  showAxisLabels?: boolean
   className?: string
 }
 
@@ -37,8 +39,10 @@ export default function RadarChart({
   series,
   size = 160,
   showLegend = true,
+  showAxisLabels,
   className = "",
 }: RadarChartProps) {
+  const labelsVisible = axisLabelsVisible(size, showAxisLabels)
   const axes = Object.keys(AXIS_LABELS) as ScoreAxis[]
   const n = axes.length
   const axisVerts = axisPoints(n, RADIUS, CENTER, CENTER)
@@ -87,8 +91,8 @@ export default function RadarChart({
             strokeWidth={0.8}
           />
         ))}
-        {/* axis labels */}
-        {axisVerts.map((p, i) => (
+        {/* axis labels — hidden below AXIS_LABEL_MIN_SIZE unless overridden */}
+        {labelsVisible && axisVerts.map((p, i) => (
           <text
             key={i}
             x={CENTER + (p.x - CENTER) * ((RADIUS + LABEL_OFFSET) / RADIUS)}

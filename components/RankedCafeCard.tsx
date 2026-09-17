@@ -47,7 +47,7 @@ export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps)
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <h3 className="truncate font-semibold text-coffee-900 group-hover:text-coffee-800">
+          <h3 className="font-semibold text-coffee-900 group-hover:text-coffee-800">
             {cafe.name}
           </h3>
           {matchLabel !== null && (
