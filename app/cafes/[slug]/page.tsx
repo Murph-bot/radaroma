@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import ConciergeChat from "@/components/ConciergeChat"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
+import { bestForChips, BEST_FOR_LABELS } from "@/lib/bestFor"
 import { curatorBlurb } from "@/lib/blurb"
 import { farthestPartner } from "@/lib/compare"
 import { getPublicCafe, getPublicCafes } from "@/lib/queries/publicCafes"
@@ -39,6 +40,7 @@ export default async function CafeDetailPage({
   const { cafe, score } = ranked
   const isCommunity = cafe.source === "public_submission"
   const blurb = curatorBlurb(cafe.verificationNotes)
+  const chips = score ? bestForChips(score) : []
   const partner = score ? farthestPartner(allRanked, slug) : null
   const compareHref = partner ? `/compare?cafes=${slug},${partner}` : "/compare"
 
@@ -60,7 +62,26 @@ export default async function CafeDetailPage({
         <p className="text-coffee-600">
           {cafe.neighborhood} · {priceTierLabel(cafe.priceTier)}
         </p>
-        <p className="text-sm text-coffee-500">{cafe.address}</p>
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(cafe.address)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block text-sm text-coffee-500 underline decoration-coffee-300 underline-offset-2 hover:text-coffee-800"
+        >
+          {cafe.address}
+        </a>
+        {chips.length > 0 && (
+          <ul className="flex flex-wrap gap-2 pt-1" aria-label="Best for">
+            {chips.map((chip) => (
+              <li
+                key={chip}
+                className="rounded-full border border-coffee-300 px-3 py-1 text-xs font-medium text-coffee-700"
+              >
+                {BEST_FOR_LABELS[chip]}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="pt-1">
           <Link
             href={compareHref}
