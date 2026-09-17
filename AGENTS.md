@@ -4,7 +4,17 @@ Curated café comparison app for Athens. Build brief: `radaroma-spec.md`.
 Megaplan (phase order + verification gates): `docs/megaplan.md`.
 Deploy guide (secrets, Access, domain): `docs/deploy.md`.
 Production: https://radaroma.com (canonical, custom domain since 2026-09-16).
+Greek mirror: https://radaroma.gr + www.radaroma.gr (custom domains since 2026-09-17).
 Fallback URL: https://radaroma.sotirios-k-goulas.workers.dev (workers.dev stays enabled).
+
+## Locales
+
+Host-based, no path prefix: `radaroma.gr` serves `lang="el"`, everything else `en`.
+`lib/i18n.ts` is the single string table — `el` is typed as `typeof en`, so missing
+Greek keys are compile errors. Server components resolve via
+`localeFromHost((await headers()).get("host"))`; client components take a `locale`
+prop. The concierge POST accepts `locale` and replies in Greek on .gr. Café names,
+neighborhoods, and curator blurbs stay in the dataset language.
 
 ## Local D1 gotcha
 
