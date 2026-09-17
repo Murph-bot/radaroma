@@ -89,6 +89,9 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
 
 - `LLM_API_KEY` (OpenRouter), `LLM_MODEL` (default `openai/gpt-4o`), `LLM_BASE_URL` (default OpenRouter)
 - `APP_URL` — canonical site URL
+- `RESEND_API_KEY`, `ALERT_EMAIL_TO` (default `mimis.sotos@gmail.com`), `ALERT_EMAIL_FROM`
+  (default Resend onboarding sender) — submission alert emails; fail-soft when unset.
+  Setup in `docs/deploy.md` → “Submission alert emails”.
 - The database is Cloudflare D1 — no env vars, arrives as the `DB` binding (wrangler.jsonc)
 
 ## Stack & decisions (see docs/megaplan.md for rationale)

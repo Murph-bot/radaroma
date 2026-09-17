@@ -17,6 +17,7 @@ Secrets (server-only, one-time):
 ```bash
 npx wrangler secret put LLM_API_KEY      # your OpenRouter key
 npx wrangler secret put APP_URL          # https://your-domain
+npx wrangler secret put RESEND_API_KEY   # submission alert emails — see below
 # NEVER set ADMIN_EMAIL / RADAROMA_DEV_ADMIN in production
 ```
 
@@ -69,6 +70,45 @@ npx wrangler d1 execute radaroma --remote --command "insert into invited_emails 
 
 Verify: `https://radaroma.com/admin` should show the Access OTP screen, then the
 dashboard after login. `curl -X POST https://radaroma.com/api/admin/cafes` → 401.
+
+## Submission alert emails (Resend)
+
+Every finished verify run (`POST /api/agent/verify`) emails the curator with the
+outcome — subject starts with `[Radaroma] FLAGGED` / `VERIFIED` / `REJECTED` so
+rejects can be skimmed past. Code: `lib/mail/resend.ts` (HTTP API, no SDK) and
+`lib/mail/submissionAlert.ts`. Fail-soft: without `RESEND_API_KEY` the worker logs
+`mail: RESEND_API_KEY not set — skipping` and the submission still succeeds.
+
+1. Create an API key at https://resend.com/api-keys (permission: *Sending access*).
+2. Pick the sender:
+   - **Quick test (no DNS):** leave `ALERT_EMAIL_FROM` unset → defaults to
+     `Radaroma <onboarding@resend.dev>`. Resend only delivers this sender to the
+     email address that owns the Resend account, so the account must be
+     `mimis.sotos@gmail.com` (or set `ALERT_EMAIL_TO` to the owner address).
+   - **Production:** Resend → Domains → add `radaroma.com`, create the DKIM/SPF
+     records it shows in the Cloudflare DNS zone, wait for *Verified*, then set
+     `ALERT_EMAIL_FROM` to e.g. `Radaroma <alerts@radaroma.com>`.
+3. Set the secrets:
+
+```bash
+npx wrangler secret put RESEND_API_KEY     # re_...
+npx wrangler secret put ALERT_EMAIL_TO     # optional, default mimis.sotos@gmail.com
+npx wrangler secret put ALERT_EMAIL_FROM   # optional, default Radaroma <onboarding@resend.dev>
+npm run deploy
+```
+
+   For local dev put the same keys in `.env.local` (and `.dev.vars` for `npm run preview`).
+
+4. Test with one submission (a fake gets rejected but still triggers a REJECTED mail):
+
+```bash
+curl -sS -X POST https://radaroma.com/api/agent/verify \
+  -H 'content-type: application/json' \
+  -d '{"submittedName":"Test Cafe Please Ignore","submittedLocation":"Nowhere, Athens"}'
+```
+
+   Check the inbox (and spam) and `npx wrangler tail radaroma` for `mail:` lines; the
+   Resend dashboard → Emails shows delivery status.
 
 ## Seed data (remote)
 
