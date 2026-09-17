@@ -1,5 +1,6 @@
-// The Radaroma mark: a five-axis pentagon — one vertex per score axis.
-// Used wherever a brand glyph or an unscored-café placeholder is needed.
+// The Radaroma mark: a five-axis pentagon with a filled shape inside —
+// one vertex per score axis. Used for the wordmark's "o", the concierge
+// header, and as the unscored-café placeholder.
 export default function PentagonMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
@@ -9,6 +10,11 @@ export default function PentagonMark({ className = "" }: { className?: string })
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinejoin="round"
+      />
+      <polygon
+        points="12,6.8 17.4,10.7 15.3,17.2 8.7,17.2 6.6,10.7"
+        fill="currentColor"
+        opacity="0.85"
       />
     </svg>
   )

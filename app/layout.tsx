@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
 import { EB_Garamond, Source_Sans_3 } from "next/font/google"
 import Link from "next/link"
+import PentagonMark from "@/components/PentagonMark"
 import PwaRegister from "@/components/PwaRegister"
 import "./globals.css"
 
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#FAF6F0",
+  themeColor: "#F4EDE3",
   width: "device-width",
   initialScale: 1,
 }
@@ -74,7 +75,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <header className="border-b border-coffee-200">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="font-display text-lg font-medium tracking-tight text-coffee-900">Radaroma</span>
+              <span className="font-display text-lg font-medium tracking-tight text-coffee-900">
+                Radar<PentagonMark className="inline-block h-[0.82em] w-[0.82em] text-copper-600" />ma
+              </span>
               <span className="text-xs uppercase tracking-[0.18em] text-coffee-400">Attica</span>
             </Link>
             <nav className="flex items-center gap-1">

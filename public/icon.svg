@@ -1,15 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#FAF6F0"/>
+  <rect width="512" height="512" fill="#F4EDE3"/>
   <g transform="translate(256 256) scale(1) translate(-256 -256)">
-    <polygon points="256.00,66.00 436.70,197.29 367.68,409.71 144.32,409.71 75.30,197.29" fill="none" stroke="#E6D7C3" stroke-width="10"/>
-    <polygon points="256.00,128.00 377.74,216.45 331.24,359.55 180.76,359.55 134.26,216.45" fill="none" stroke="#E6D7C3" stroke-width="7"/>
-    <polygon points="256.00,190.00 318.77,235.60 294.79,309.40 217.21,309.40 193.23,235.60" fill="none" stroke="#E6D7C3" stroke-width="7"/>
-    <polygon points="256.00,66.00 400.56,209.03 323.01,348.23 155.49,394.34 75.30,197.29" fill="#B08968" fill-opacity="0.8" stroke="#86684C" stroke-width="13" stroke-linejoin="round"/>
-    <path d="M 216 206 C 204 186 228 176 216 154" fill="none" stroke="#A07F5F" stroke-width="12" stroke-linecap="round"/>
-    <path d="M 296 206 C 284 186 308 176 296 154" fill="none" stroke="#A07F5F" stroke-width="12" stroke-linecap="round"/>
-    <path d="M 326 256 C 372 256 372 330 326 330" fill="none" stroke="#463523" stroke-width="10" stroke-linecap="round"/>
-    <rect x="186" y="236" width="140" height="112" rx="16" fill="#FAF6F0" stroke="#463523" stroke-width="10"/>
-    <rect x="196" y="248" width="120" height="36" rx="10" fill="#6E543E"/>
-    <ellipse cx="256" cy="372" rx="100" ry="15" fill="none" stroke="#463523" stroke-width="9"/>
+    <line x1="256" y1="256" x2="256" y2="56" stroke="#D9C7B3" stroke-width="6"/>
+    <line x1="256" y1="256" x2="446.21130325903073" y2="194.19660112501052" stroke="#D9C7B3" stroke-width="6"/>
+    <line x1="256" y1="256" x2="373.55705045849464" y2="417.8033988749895" stroke="#D9C7B3" stroke-width="6"/>
+    <line x1="256" y1="256" x2="138.4429495415054" y2="417.8033988749895" stroke="#D9C7B3" stroke-width="6"/>
+    <line x1="256" y1="256" x2="65.78869674096927" y2="194.19660112501055" stroke="#D9C7B3" stroke-width="6"/>
+    <polygon points="256.00,56.00 446.21,194.20 373.56,417.80 138.44,417.80 65.79,194.20" fill="none" stroke="#D9C7B3" stroke-width="9"/>
+    <polygon points="256.00,124.00 381.54,215.21 333.59,362.79 178.41,362.79 130.46,215.21" fill="none" stroke="#D9C7B3" stroke-width="6"/>
+    <polygon points="256.00,192.00 316.87,236.22 293.62,307.78 218.38,307.78 195.13,236.22" fill="none" stroke="#D9C7B3" stroke-width="6"/>
+    <polygon points="256.00,56.00 389.15,212.74 307.73,327.19 161.95,385.44 84.81,200.38" fill="#B5683A" fill-opacity="0.25" stroke="#8F4E28" stroke-width="14" stroke-linejoin="round"/>
   </g>
 </svg>
