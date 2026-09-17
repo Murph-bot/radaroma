@@ -161,7 +161,7 @@ export default function CafeExplorer({
             No cafés match these filters.
           </p>
         ) : (
-          list.map((r) => <RankedCafeCard key={r.cafe.id} ranked={r} />)
+          list.map((r) => <RankedCafeCard key={r.cafe.id} ranked={r} weights={weights} />)
         )}
       </div>
     </div>

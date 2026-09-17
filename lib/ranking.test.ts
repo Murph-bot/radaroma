@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest"
-import { DEFAULT_WEIGHTS, rankCafes, weightedScore, type Weights } from "./ranking"
+import {
+  DEFAULT_WEIGHTS,
+  formatMatchLabel,
+  isCustomWeights,
+  rankCafes,
+  weightedScore,
+  type Weights,
+} from "./ranking"
 import type { Cafe } from "@/lib/schemas/cafe"
 import type { CafeScore } from "@/lib/schemas/score"
 
@@ -95,5 +102,24 @@ describe("rankCafes", () => {
     const scores = new Map([["a", score("a", { quality: 5, priceValue: 5, workFriendliness: 5, quietVibe: 5, specialtyDepth: 5 })]])
     const ranked = rankCafes([cafe("a", "Alpha")], scores)
     expect(ranked[0].rankScore).toBe(5)
+  })
+})
+
+describe("formatMatchLabel", () => {
+  it("hides the composite at default weights", () => {
+    expect(isCustomWeights(DEFAULT_WEIGHTS)).toBe(false)
+    expect(formatMatchLabel(4.4, DEFAULT_WEIGHTS)).toBeNull()
+  })
+
+  it("labels a steered ranking as a match, not a /5 star", () => {
+    const laptop = { ...DEFAULT_WEIGHTS, workFriendliness: 2, quietVibe: 2 }
+    expect(isCustomWeights(laptop)).toBe(true)
+    expect(formatMatchLabel(4.351, laptop)).toBe("match 4.4")
+    expect(formatMatchLabel(4.351, laptop)).not.toMatch(/\/\s*5/)
+  })
+
+  it("returns null when there is no score", () => {
+    const laptop = { ...DEFAULT_WEIGHTS, workFriendliness: 2 }
+    expect(formatMatchLabel(null, laptop)).toBeNull()
   })
 })

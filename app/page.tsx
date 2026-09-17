@@ -3,6 +3,7 @@ import CafeExplorer from "@/components/CafeExplorer"
 import ConciergeChat from "@/components/ConciergeChat"
 import RankedCafeCard from "@/components/RankedCafeCard"
 import { getPublicCafes } from "@/lib/queries/publicCafes"
+import { DEFAULT_WEIGHTS } from "@/lib/ranking"
 
 export const dynamic = "force-dynamic"
 
@@ -71,7 +72,7 @@ export default async function Home() {
         </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {top.map((r) => (
-            <RankedCafeCard key={r.cafe.id} ranked={r} />
+            <RankedCafeCard key={r.cafe.id} ranked={r} weights={DEFAULT_WEIGHTS} />
           ))}
         </div>
       </section>

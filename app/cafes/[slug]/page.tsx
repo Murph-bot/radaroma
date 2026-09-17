@@ -20,7 +20,7 @@ export async function generateMetadata({
   return {
     title: ranked ? ranked.cafe.name : "Café not found",
     description: ranked
-      ? `${ranked.cafe.name} in ${ranked.cafe.neighborhood} — radar score ${ranked.rankScore?.toFixed(1) ?? "n/a"} / 5.`
+      ? `${ranked.cafe.name} in ${ranked.cafe.neighborhood} — average ${ranked.rankScore?.toFixed(1) ?? "n/a"} across five axes.`
       : undefined,
   }
 }
@@ -34,7 +34,7 @@ export default async function CafeDetailPage({
   const ranked = await getPublicCafe(slug)
   if (!ranked) notFound()
 
-  const { cafe, score, rankScore } = ranked
+  const { cafe, score } = ranked
   const isCommunity = cafe.source === "public_submission"
 
   return (
@@ -46,11 +46,6 @@ export default async function CafeDetailPage({
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-bold tracking-tight text-coffee-900">{cafe.name}</h1>
-          {rankScore !== null && (
-            <span className="rounded-full bg-coffee-100 px-2.5 py-1 text-sm font-semibold text-coffee-900">
-              {rankScore.toFixed(1)} / 5
-            </span>
-          )}
           {isCommunity && (
             <span className="rounded bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800">
               community-submitted, AI-verified

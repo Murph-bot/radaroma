@@ -1,11 +1,19 @@
 import Link from "next/link"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
 import { priceTierLabel } from "@/lib/price"
-import type { RankedCafe } from "@/lib/ranking"
+import { formatMatchLabel, type RankedCafe, type Weights } from "@/lib/ranking"
 
-export default function RankedCafeCard({ ranked }: { ranked: RankedCafe }) {
+interface RankedCafeCardProps {
+  ranked: RankedCafe
+  weights: Weights
+}
+
+export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps) {
   const { cafe, score, rankScore } = ranked
   const isCommunity = cafe.source === "public_submission"
+  const matchLabel = formatMatchLabel(rankScore, weights)
+
+
 
   return (
     <Link
@@ -42,9 +50,9 @@ export default function RankedCafeCard({ ranked }: { ranked: RankedCafe }) {
           <h3 className="truncate font-semibold text-coffee-900 group-hover:text-coffee-800">
             {cafe.name}
           </h3>
-          {rankScore !== null && (
-            <span className="shrink-0 rounded-full bg-coffee-100 px-2 py-0.5 text-xs font-semibold text-coffee-900">
-              {rankScore.toFixed(1)} / 5
+          {matchLabel !== null && (
+            <span className="shrink-0 rounded-full bg-coffee-100 px-2 py-0.5 text-xs font-semibold tabular-nums text-coffee-900">
+              {matchLabel}
             </span>
           )}
         </div>

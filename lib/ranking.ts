@@ -28,6 +28,22 @@ export interface RankedCafe {
   rankScore: number | null
 }
 
+// True when the visitor has steered any axis away from the defaults — the
+// difference between "our average" and "your match".
+export function isCustomWeights(weights: Weights): boolean {
+  return SCORE_AXES.some((axis) => weights[axis] !== DEFAULT_WEIGHTS[axis])
+}
+
+// The composite is only meaningful once it has been steered: at default
+// weights it is just a star rating, so the label hides instead.
+export function formatMatchLabel(
+  rankScore: number | null,
+  weights: Weights,
+): string | null {
+  if (rankScore === null || !isCustomWeights(weights)) return null
+  return `match ${rankScore.toFixed(1)}`
+}
+
 export function scoreForAxis(score: CafeScore, axis: ScoreAxis): number {
   return score[axis]
 }

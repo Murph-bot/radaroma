@@ -116,10 +116,10 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
                   </tr>
                 ))}
                 <tr>
-                  <td className="py-2 pr-4 font-medium text-coffee-600">Overall</td>
+                  <td className="py-2 pr-4 font-medium text-coffee-600">Average</td>
                   {chosen.map((r) => (
-                    <td key={r.cafe.id} className="py-2 pr-4 font-mono font-semibold text-coffee-900">
-                      {r.rankScore !== null ? `${r.rankScore.toFixed(1)} / 5` : "—"}
+                    <td key={r.cafe.id} className="py-2 pr-4 font-mono font-semibold tabular-nums text-coffee-900">
+                      {r.rankScore !== null ? r.rankScore.toFixed(1) : "—"}
                     </td>
                   ))}
                 </tr>
