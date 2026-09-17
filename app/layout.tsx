@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
 import { EB_Garamond, Source_Sans_3 } from "next/font/google"
 import Link from "next/link"
+import MobileNav from "@/components/MobileNav"
 import PentagonMark from "@/components/PentagonMark"
 import PwaRegister from "@/components/PwaRegister"
 import "./globals.css"
@@ -80,7 +81,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </span>
               <span className="text-xs uppercase tracking-[0.18em] text-coffee-400">Attica</span>
             </Link>
-            <nav className="flex items-center gap-1">
+            <nav className="hidden items-center gap-1 sm:flex">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -93,9 +94,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </nav>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 pb-24 sm:pb-8">{children}</main>
         <PwaRegister />
-        <footer className="border-t border-coffee-200 py-6">
+        <MobileNav />
+        <footer className="border-t border-coffee-200 py-6 pb-20 sm:pb-6">
           <div className="mx-auto w-full max-w-5xl px-4 text-xs text-coffee-400">
             Radaroma — a curated, weighted comparison of Attica cafés. Scores are opinions;
             go taste for yourself.

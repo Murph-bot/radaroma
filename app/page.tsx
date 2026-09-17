@@ -1,7 +1,6 @@
 import Link from "next/link"
 import CafeExplorer from "@/components/CafeExplorer"
-import ConciergeChat from "@/components/ConciergeChat"
-import PentagonMark from "@/components/PentagonMark"
+import ConciergeStrip from "@/components/ConciergeStrip"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
 import { shapeTrio } from "@/lib/compare"
 import { getPublicCafes } from "@/lib/queries/publicCafes"
@@ -15,7 +14,7 @@ export default async function Home() {
   return (
     <div className="space-y-10">
       <section className="pt-4">
-        <h1 className="max-w-3xl font-display text-5xl font-medium tracking-tight text-coffee-900 sm:text-6xl">
+        <h1 className="max-w-3xl font-display text-4xl font-medium tracking-tight text-coffee-900 sm:text-5xl">
           Attica cafés, as a shape.
         </h1>
         {trio.length > 0 && (
@@ -68,21 +67,7 @@ export default async function Home() {
         </p>
       </section>
 
-      <details className="group overflow-hidden rounded-xl border border-coffee-200 bg-white">
-        <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-coffee-700 [&::-webkit-details-marker]:hidden">
-          <PentagonMark className="h-4 w-4 text-copper-600" />
-          Ask the concierge — it only recommends cafés in our dataset
-          <span
-            aria-hidden="true"
-            className="ml-auto text-coffee-400 transition-transform duration-150 group-open:rotate-90"
-          >
-            ▸
-          </span>
-        </summary>
-        <div className="border-t border-coffee-200">
-          <ConciergeChat framed={false} />
-        </div>
-      </details>
+      <ConciergeStrip />
     </div>
   )
 }
