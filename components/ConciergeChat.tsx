@@ -11,11 +11,15 @@ interface ConciergeMessage {
 interface ConciergeChatProps {
   cafeContext?: string
   placeholder?: string
+  // Standalone card chrome (border + header). False when embedded in a
+  // collapsible strip that already labels it.
+  framed?: boolean
 }
 
 export default function ConciergeChat({
   cafeContext,
   placeholder = "Ask the concierge — e.g. “quiet place to work near Exarchia?”",
+  framed = true,
 }: ConciergeChatProps) {
   const [messages, setMessages] = useState<ConciergeMessage[]>([])
   const [input, setInput] = useState("")
@@ -54,14 +58,22 @@ export default function ConciergeChat({
   }
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-coffee-200 bg-white">
-      <div className="flex items-center gap-2 border-b border-coffee-200 bg-coffee-50 px-4 py-2.5">
-        <PentagonMark className="h-4 w-4 text-copper-600" />
-        <span className="text-sm font-semibold text-coffee-800">Café Concierge</span>
-        <span className="ml-auto text-[11px] text-coffee-400">
-          only recommends cafés in our dataset
-        </span>
-      </div>
+    <div
+      className={
+        framed
+          ? "flex flex-col overflow-hidden rounded-xl border border-coffee-200 bg-white"
+          : "flex flex-col bg-white"
+      }
+    >
+      {framed && (
+        <div className="flex items-center gap-2 border-b border-coffee-200 bg-coffee-50 px-4 py-2.5">
+          <PentagonMark className="h-4 w-4 text-copper-600" />
+          <span className="text-sm font-semibold text-coffee-800">Café Concierge</span>
+          <span className="ml-auto text-[11px] text-coffee-400">
+            only recommends cafés in our dataset
+          </span>
+        </div>
+      )}
 
       <div
         ref={listRef}

@@ -21,12 +21,14 @@ const priceTiers = [
 interface CafeExplorerProps {
   ranked: RankedCafe[]
   compact?: boolean
+  showFilters?: boolean
   initialQuery?: string
 }
 
 export default function CafeExplorer({
   ranked,
   compact = false,
+  showFilters = true,
   initialQuery = "",
 }: CafeExplorerProps) {
   const [weights, setWeights] = useState<Weights>({ ...DEFAULT_WEIGHTS })
@@ -134,7 +136,7 @@ export default function CafeExplorer({
             </label>
           ))}
         </div>
-        {!compact && (
+        {!compact && showFilters && (
           <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-coffee-200 pt-3">
             <label className="flex items-center gap-2 text-sm text-coffee-700">
               <span>Neighborhood</span>

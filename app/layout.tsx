@@ -21,17 +21,17 @@ export const metadata: Metadata = {
     template: "%s · Radaroma",
   },
   description:
-    "Attica cafés, ranked your way. Compare cafés by what you care about — quiet, social, price-value, specialty depth, work-friendliness — and ask the concierge.",
+    "Attica cafés, as a shape. Five-axis radar profiles, a ranking you steer with weights, and a concierge that only knows the cafés we list.",
   openGraph: {
     title: "Radaroma",
     description:
-      "Attica cafés, ranked your way. Radar charts, weighted re-ranking, and an AI concierge grounded in the dataset.",
+      "Attica cafés, as a shape. Radar charts, weighted re-ranking, and an AI concierge grounded in the dataset.",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Radaroma",
-    description: "Attica cafés, ranked your way.",
+    description: "Attica cafés, as a shape.",
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {

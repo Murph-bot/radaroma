@@ -1,90 +1,88 @@
 import Link from "next/link"
 import CafeExplorer from "@/components/CafeExplorer"
 import ConciergeChat from "@/components/ConciergeChat"
-import RankedCafeCard from "@/components/RankedCafeCard"
+import PentagonMark from "@/components/PentagonMark"
+import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
+import { shapeTrio } from "@/lib/compare"
 import { getPublicCafes } from "@/lib/queries/publicCafes"
-import { DEFAULT_WEIGHTS } from "@/lib/ranking"
 
 export const dynamic = "force-dynamic"
 
 export default async function Home() {
   const ranked = await getPublicCafes()
-  const top = ranked.slice(0, 3)
+  const trio = shapeTrio(ranked)
 
   return (
-    <div className="space-y-14">
-      <section className="mx-auto max-w-2xl pt-6 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-coffee-900 sm:text-5xl">
-          Attica cafés, <span className="text-coffee-600">ranked your way</span>.
+    <div className="space-y-10">
+      <section className="pt-4">
+        <h1 className="max-w-3xl font-display text-5xl font-medium tracking-tight text-coffee-900 sm:text-6xl">
+          Attica cafés, as a shape.
         </h1>
-        <p className="mt-4 text-lg text-coffee-600">
-          Not another star-rating aggregator. Every café is a radar chart — re-rank the list by
-          quiet vs. social, price-value, specialty depth, or work-friendliness. Ask the concierge
-          anything; it only recommends cafés that are actually here.
-        </p>
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <form
-            action="/cafes"
-            className="flex w-full max-w-md items-center gap-2 rounded-full border border-coffee-300 bg-white px-4 py-2 shadow-sm focus-within:border-coffee-700"
+        {trio.length > 0 && (
+          <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-4">
+            {trio.map((r, i) => (
+              <Link
+                key={r.cafe.id}
+                href={`/cafes/${r.cafe.slug}`}
+                className="group flex items-center gap-3"
+              >
+                {r.score && (
+                  <RadarChart
+                    series={[
+                      {
+                        id: r.cafe.id,
+                        label: r.cafe.name,
+                        values: {
+                          quality: r.score.quality,
+                          priceValue: r.score.priceValue,
+                          workFriendliness: r.score.workFriendliness,
+                          quietVibe: r.score.quietVibe,
+                          specialtyDepth: r.score.specialtyDepth,
+                        },
+                        color: SERIES_COLORS[i % SERIES_COLORS.length],
+                      },
+                    ]}
+                    size={84}
+                    showLegend={false}
+                    className="text-coffee-800"
+                  />
+                )}
+                <span className="text-sm font-medium text-coffee-700 underline-offset-4 group-hover:text-coffee-900 group-hover:underline">
+                  {r.cafe.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section aria-label="Rank the list">
+        <CafeExplorer ranked={ranked} showFilters={false} />
+        <p className="mt-3 text-sm text-coffee-500">
+          <Link
+            href="/cafes"
+            className="font-medium text-coffee-700 underline-offset-4 hover:underline"
           >
-            <span aria-hidden="true" className="text-coffee-400">
-              ☕
-            </span>
-            <input
-              type="search"
-              name="q"
-              placeholder="Search cafés…"
-              aria-label="Search cafés"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-coffee-400"
-            />
-            <button
-              type="submit"
-              className="rounded-full bg-coffee-800 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-coffee-900"
-            >
-              Search
-            </button>
-          </form>
-        </div>
-        <div className="mt-4 flex items-center justify-center gap-4 text-sm">
-          <Link href="/compare" className="font-medium text-coffee-800 underline-offset-4 hover:underline">
-            Compare cafés side by side
+            Search and filter all {ranked.length} cafés →
           </Link>
-          <Link href="/submit" className="font-medium text-coffee-500 underline-offset-4 hover:underline">
-            Know a great spot? Submit it
-          </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-2xl">
-        <h2 className="mb-1 text-xl font-semibold text-coffee-900">Ask the concierge</h2>
-        <p className="mb-4 text-sm text-coffee-500">
-          A real AI, grounded in our dataset. It can&apos;t recommend a café that isn&apos;t here.
         </p>
-        <ConciergeChat />
       </section>
 
-      <section>
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-xl font-semibold text-coffee-900">Top picks</h2>
-          <Link href="/cafes" className="text-sm font-medium text-coffee-800 hover:underline">
-            See all {ranked.length} cafés →
-          </Link>
+      <details className="group overflow-hidden rounded-xl border border-coffee-200 bg-white">
+        <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-coffee-700 [&::-webkit-details-marker]:hidden">
+          <PentagonMark className="h-4 w-4 text-copper-600" />
+          Ask the concierge — it only recommends cafés in our dataset
+          <span
+            aria-hidden="true"
+            className="ml-auto text-coffee-400 transition-transform duration-150 group-open:rotate-90"
+          >
+            ▸
+          </span>
+        </summary>
+        <div className="border-t border-coffee-200">
+          <ConciergeChat framed={false} />
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {top.map((r) => (
-            <RankedCafeCard key={r.cafe.id} ranked={r} weights={DEFAULT_WEIGHTS} />
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-1 text-xl font-semibold text-coffee-900">Find your spot</h2>
-        <p className="mb-4 text-sm text-coffee-500">
-          Drag the sliders — the list re-ranks instantly. Working from a laptop? Crank up
-          “Work”.
-        </p>
-        <CafeExplorer ranked={ranked} compact />
-      </section>
+      </details>
     </div>
   )
 }
