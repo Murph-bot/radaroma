@@ -137,6 +137,10 @@ export default function ConciergeChat({
           Send
         </button>
       </form>
+      <p className="border-t border-coffee-100 px-3 py-1.5 text-[11px] leading-snug text-coffee-400">
+        Answers are AI-generated (via OpenRouter) and can get details wrong — check the café
+        before you go.
+      </p>
     </div>
   )
 }

@@ -98,9 +98,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <PwaRegister />
         <MobileNav />
         <footer className="border-t border-coffee-200 py-6 pb-20 sm:pb-6">
-          <div className="mx-auto w-full max-w-5xl px-4 text-xs text-coffee-400">
-            Radaroma — a curated, weighted comparison of Attica cafés. Scores are opinions;
-            go taste for yourself.
+          <div className="mx-auto w-full max-w-5xl space-y-1 px-4 text-xs text-coffee-400">
+            <p>
+              Radaroma — a curated, weighted comparison of Attica cafés. Scores are opinions;
+              go taste for yourself.
+            </p>
+            <p>
+              This site sets no cookies; the admin area signs in through Cloudflare Access.
+              Anonymous visit stats come from Cloudflare Web Analytics, which is cookieless.
+            </p>
           </div>
         </footer>
       </body>
