@@ -52,9 +52,9 @@ export default async function CafeDetailPage({
 
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight text-coffee-900">{cafe.name}</h1>
+          <h1 className="font-display text-3xl font-medium tracking-tight text-coffee-900">{cafe.name}</h1>
           {isCommunity && (
-            <span className="rounded bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800">
+            <span className="rounded border border-copper-500/50 bg-copper-100 px-2 py-1 text-xs font-medium text-copper-700">
               community-submitted, AI-verified
             </span>
           )}
@@ -85,7 +85,7 @@ export default async function CafeDetailPage({
         <div className="pt-1">
           <Link
             href={compareHref}
-            className="inline-block rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-700 transition hover:bg-coffee-100"
+            className="inline-block rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-700 transition-colors duration-150 hover:bg-coffee-100"
           >
             Compare it{partner ? ` with ${allRanked.find((r) => r.cafe.slug === partner)?.cafe.name ?? ""}` : ""} →
           </Link>
@@ -130,11 +130,11 @@ export default async function CafeDetailPage({
                 <div key={axis}>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-coffee-700">{AXIS_LABELS[axis]}</span>
-                    <span className="font-mono text-coffee-500">{score[axis]} / 5</span>
+                    <span className="tabular-nums text-coffee-500">{score[axis]} / 5</span>
                   </div>
                   <div className="mt-1 h-2 overflow-hidden rounded-full bg-coffee-100">
                     <div
-                      className="h-full rounded-full bg-coffee-700"
+                      className="h-full rounded-full bg-copper-500"
                       style={{ width: `${(score[axis] / 5) * 100}%` }}
                     />
                   </div>

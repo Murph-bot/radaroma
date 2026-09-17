@@ -87,7 +87,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
           <button
             type="button"
             onClick={copyLink}
-            className="shrink-0 rounded-lg border border-coffee-300 px-3 py-1.5 text-xs font-medium text-coffee-700 transition hover:bg-coffee-100"
+            className="shrink-0 rounded-lg border border-coffee-300 px-3 py-1.5 text-xs font-medium text-coffee-700 transition-colors duration-150 hover:bg-coffee-100"
           >
             {copied ? "Copied" : "Copy link"}
           </button>
@@ -105,7 +105,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
                   return (
                     <label
                       key={r.cafe.id}
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
+                      className={`flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
                         checked ? "bg-coffee-100 text-coffee-900" : "hover:bg-coffee-100"
                       } ${disabled ? "cursor-not-allowed opacity-40" : ""}`}
                     >
@@ -114,7 +114,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
                         checked={checked}
                         disabled={disabled}
                         onChange={() => handleToggle(r.cafe.slug)}
-                        className="accent-coffee-700"
+                        className="accent-copper-600"
                       />
                       <span className="truncate">{r.cafe.name}</span>
                     </label>
@@ -154,7 +154,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
                   <tr key={axis} className="border-b border-coffee-100">
                     <td className="py-2 pr-4 text-coffee-600">{AXIS_LABELS[axis]}</td>
                     {chosen.map((r) => (
-                      <td key={r.cafe.id} className="py-2 pr-4 font-mono text-coffee-800">
+                      <td key={r.cafe.id} className="py-2 pr-4 tabular-nums text-coffee-800">
                         {r.score ? `${r.score[axis]} / 5` : "—"}
                       </td>
                     ))}
@@ -163,7 +163,7 @@ export default function ComparePicker({ ranked, initialSlugs }: ComparePickerPro
                 <tr>
                   <td className="py-2 pr-4 font-medium text-coffee-600">Average</td>
                   {chosen.map((r) => (
-                    <td key={r.cafe.id} className="py-2 pr-4 font-mono font-semibold tabular-nums text-coffee-900">
+                    <td key={r.cafe.id} className="py-2 pr-4 font-semibold tabular-nums text-coffee-900">
                       {r.rankScore !== null ? r.rankScore.toFixed(1) : "—"}
                     </td>
                   ))}

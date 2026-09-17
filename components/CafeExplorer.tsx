@@ -90,7 +90,7 @@ export default function CafeExplorer({
           <button
             type="button"
             onClick={handleReset}
-            className="rounded-md px-2 py-1 text-xs font-medium text-coffee-500 transition hover:bg-coffee-200 hover:text-coffee-800"
+            className="rounded-md px-2 py-1 text-xs font-medium text-coffee-500 transition-colors duration-150 hover:bg-coffee-200 hover:text-coffee-800"
           >
             Reset
           </button>
@@ -102,10 +102,10 @@ export default function CafeExplorer({
               type="button"
               onClick={() => handleMood(mood.id)}
               aria-pressed={activeMood === mood.id}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition active:scale-[0.96] ${
+              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition-[transform,background-color,border-color,color] duration-150 active:scale-[0.96] ${
                 activeMood === mood.id
-                  ? "border-coffee-800 bg-coffee-800 text-white"
-                  : "border-coffee-300 bg-white text-coffee-700 hover:border-coffee-600 hover:text-coffee-900"
+                  ? "border-copper-600 bg-copper-600 text-white"
+                  : "border-coffee-300 bg-white text-coffee-700 hover:border-copper-500/60 hover:text-coffee-900"
               }`}
             >
               {mood.label}
@@ -117,7 +117,7 @@ export default function CafeExplorer({
             <label key={axis} className="block">
               <span className="flex items-center justify-between text-sm text-coffee-700">
                 <span>{AXIS_LABELS[axis]}</span>
-                <span className="font-mono text-xs text-coffee-400">
+                <span className="text-xs tabular-nums text-coffee-400">
                   {weights[axis].toFixed(2)}×
                 </span>
               </span>
@@ -129,7 +129,7 @@ export default function CafeExplorer({
                 value={weights[axis]}
                 onChange={(e) => handleWeightChange(axis, Number(e.target.value))}
                 aria-label={`${AXIS_LABELS[axis]} importance`}
-                className="mt-1 w-full accent-coffee-700"
+                className="mt-1 w-full accent-copper-600"
               />
             </label>
           ))}

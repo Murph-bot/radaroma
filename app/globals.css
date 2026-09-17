@@ -1,31 +1,54 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf6f0; /* soft cream */
-  --foreground: #463523; /* deep espresso */
+  --background: #f4ede3; /* paper — dirtier cream */
+  --foreground: #1f1612; /* ink — near-black espresso */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  /* Soft coffee palette */
-  --color-coffee-50: #faf6f0;
-  --color-coffee-100: #f3ebe0;
-  --color-coffee-200: #e6d7c3;
-  --color-coffee-300: #d3bca0;
-  --color-coffee-400: #b99a77;
-  --color-coffee-500: #a07f5f;
-  --color-coffee-600: #86684c;
-  --color-coffee-700: #6e543e;
-  --color-coffee-800: #58432f;
-  --color-coffee-900: #463523;
+  /* Paper / ink ramp — coffee-* names kept, retuned to the zine palette */
+  --color-coffee-50: #f4ede3;
+  --color-coffee-100: #ece0d0;
+  --color-coffee-200: #d9c7b3; /* hairline */
+  --color-coffee-300: #c4a98d;
+  --color-coffee-400: #a98a68;
+  --color-coffee-500: #7a6556; /* muted */
+  --color-coffee-600: #654f41;
+  --color-coffee-700: #4f3d30;
+  --color-coffee-800: #37291f;
+  --color-coffee-900: #1f1612; /* ink */
+
+  /* Second hue: copper for the active/steered states, sage + wine for compare */
+  --color-copper-100: #f3e3d5;
+  --color-copper-500: #b5683a;
+  --color-copper-600: #9e5a2f;
+  --color-copper-700: #8f4e28;
+  --color-sage: #6f7f68;
+  --color-wine: #7a4a55;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

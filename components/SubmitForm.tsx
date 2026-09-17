@@ -165,7 +165,7 @@ export default function SubmitForm() {
       <button
         type="submit"
         disabled={state.phase === "submitting" || name.trim().length === 0 || location.trim().length === 0}
-        className="w-full rounded-lg bg-coffee-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-coffee-900 disabled:opacity-50"
+        className="w-full rounded-lg bg-copper-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-copper-700 disabled:opacity-50"
       >
         {state.phase === "submitting" ? "Verifying with the concierge…" : "Submit for verification"}
       </button>

@@ -1,18 +1,18 @@
 import type { Metadata, Viewport } from "next"
 import type { ReactNode } from "react"
-import { Geist, Geist_Mono } from "next/font/google"
+import { EB_Garamond, Source_Sans_3 } from "next/font/google"
 import Link from "next/link"
 import PwaRegister from "@/components/PwaRegister"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const ebGaramond = EB_Garamond({
+  variable: "--font-eb-garamond",
+  subsets: ["latin", "greek"],
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
+  subsets: ["latin", "greek"],
 })
 
 export const metadata: Metadata = {
@@ -62,8 +62,8 @@ const navLinks = [
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-coffee-50 text-coffee-900">
+    <html lang="en" className={`${ebGaramond.variable} ${sourceSans.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col bg-coffee-50 font-sans text-coffee-900">
         {process.env.NEXT_PUBLIC_CF_ANALYTICS_TOKEN && (
           <script
             defer
@@ -74,15 +74,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <header className="border-b border-coffee-200">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="text-lg font-bold tracking-tight text-coffee-900">Radaroma</span>
-              <span className="text-xs text-coffee-400">Attica</span>
+              <span className="font-display text-lg font-medium tracking-tight text-coffee-900">Radaroma</span>
+              <span className="text-xs uppercase tracking-[0.18em] text-coffee-400">Attica</span>
             </Link>
             <nav className="flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="rounded-md px-3 py-1.5 text-sm font-medium text-coffee-600 transition hover:bg-coffee-100 hover:text-coffee-900"
+                  className="rounded-md px-3 py-1.5 text-sm font-medium text-coffee-600 transition-colors duration-150 hover:bg-coffee-100 hover:text-coffee-900"
                 >
                   {link.label}
                 </Link>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
+import PentagonMark from "@/components/PentagonMark"
 
 interface ConciergeMessage {
   role: "user" | "assistant"
@@ -55,9 +56,7 @@ export default function ConciergeChat({
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-coffee-200 bg-white">
       <div className="flex items-center gap-2 border-b border-coffee-200 bg-coffee-50 px-4 py-2.5">
-        <span aria-hidden="true" className="text-lg">
-          ☕
-        </span>
+        <PentagonMark className="h-4 w-4 text-copper-600" />
         <span className="text-sm font-semibold text-coffee-800">Café Concierge</span>
         <span className="ml-auto text-[11px] text-coffee-400">
           only recommends cafés in our dataset
@@ -121,7 +120,7 @@ export default function ConciergeChat({
         <button
           type="submit"
           disabled={busy || input.trim().length === 0}
-          className="shrink-0 rounded-lg bg-coffee-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-coffee-900 disabled:opacity-40"
+          className="shrink-0 rounded-lg bg-copper-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-copper-700 disabled:opacity-40"
         >
           Send
         </button>

@@ -16,9 +16,8 @@ const CENTER = VIEWBOX / 2
 const RADIUS = 68
 const LABEL_OFFSET = 16
 
-// Soft coffee-family palette (espresso, caramel, sage, muted lavender) —
-// distinguishable in compare mode, gentle on the eyes.
-export const SERIES_COLORS = ["#7a5c43", "#b08968", "#8a9a7b", "#9b8cb8"]
+// Zine palette: copper / sage / wine. Compare caps at three series.
+export const SERIES_COLORS = ["#b5683a", "#6f7f68", "#7a4a55"]
 
 export interface RadarSeries {
   id: string
@@ -112,10 +111,11 @@ export default function RadarChart({
               polygonPoints(axes.map((a) => s.values[a]), RADIUS, CENTER, CENTER),
             )}
             fill={s.color}
-            fillOpacity={0.14}
+            fillOpacity={0.25}
             stroke={s.color}
             strokeWidth={2}
             strokeLinejoin="round"
+            className="transition-[points] duration-200"
           />
         ))}
       </svg>

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import PentagonMark from "@/components/PentagonMark"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
 import { priceTierLabel } from "@/lib/price"
 import { formatMatchLabel, type RankedCafe, type Weights } from "@/lib/ranking"
@@ -18,7 +19,7 @@ export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps)
   return (
     <Link
       href={`/cafes/${cafe.slug}`}
-      className="group flex items-center gap-4 rounded-xl border border-coffee-200 bg-white p-4 transition hover:border-coffee-700/40 hover:shadow-sm"
+      className="group flex items-center gap-4 rounded-xl border border-coffee-200 bg-white p-4 transition-[border-color,box-shadow] duration-150 hover:border-coffee-700/40 hover:shadow-sm"
     >
       {score ? (
         <RadarChart
@@ -41,8 +42,8 @@ export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps)
           className="shrink-0 text-coffee-800"
         />
       ) : (
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-coffee-100 text-2xl">
-          ☕
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-coffee-100">
+          <PentagonMark className="h-8 w-8 text-coffee-300" />
         </div>
       )}
       <div className="min-w-0 flex-1">
@@ -60,7 +61,7 @@ export default function RankedCafeCard({ ranked, weights }: RankedCafeCardProps)
           {cafe.neighborhood} · {priceTierLabel(cafe.priceTier)}
         </p>
         {isCommunity && (
-          <span className="mt-1 inline-block rounded bg-sky-100 px-1.5 py-0.5 text-[11px] font-medium text-sky-800">
+          <span className="mt-1 inline-block rounded border border-copper-500/50 bg-copper-100 px-1.5 py-0.5 text-[11px] font-medium text-copper-700">
             community-submitted, AI-verified
           </span>
         )}
