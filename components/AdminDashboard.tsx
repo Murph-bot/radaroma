@@ -81,6 +81,7 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
   const [savingDraft, setSavingDraft] = useState(false)
   const [cafeScores, setCafeScores] = useState<Record<string, ScoreInput>>({})
   const [submissionScores, setSubmissionScores] = useState<Record<string, ScoreInput>>({})
+  const [showReviewed, setShowReviewed] = useState(false)
 
   const handleAction = async (submissionId: string, action: "approve" | "reject", scores?: ScoreInput) => {
     setBusyId(submissionId)
@@ -126,12 +127,22 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
     }
   }
 
-  const handleSaveScores = async (cafeId: string, scores: ScoreInput) => {
+  const handleSaveScores = async (cafeId: string, scores: ScoreInput, markReviewed = false) => {
+    setBusyId(cafeId)
     setActionError(null)
-    const res = await postJson(`/api/admin/cafes/${cafeId}/scores`, scores)
+    const res = await postJson(`/api/admin/cafes/${cafeId}/scores`, { ...scores, markReviewed })
     if (!res.ok) setActionError(res.error ?? "save failed")
+    setBusyId(null)
     router.refresh()
   }
+
+  const reviewedCount = data.cafes.filter(({ score }) => score?.scoresReviewedAt).length
+  const sortedCafes = [...data.cafes].sort((a, b) => {
+    const ra = a.score?.scoresReviewedAt ? 1 : 0
+    const rb = b.score?.scoresReviewedAt ? 1 : 0
+    return ra - rb || a.cafe.name.localeCompare(b.cafe.name)
+  })
+  const visibleCafes = showReviewed ? sortedCafes : sortedCafes.filter(({ score }) => !score?.scoresReviewedAt)
 
   return (
     <div className="space-y-10">
@@ -264,17 +275,54 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-coffee-900">Café scores</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-lg font-semibold text-coffee-900">
+            Café scores{" "}
+            <span className="text-sm font-normal text-coffee-500">
+              · {reviewedCount} / {data.cafes.length} reviewed
+            </span>
+          </h2>
+          <label className="flex items-center gap-1.5 text-xs text-coffee-500">
+            <input
+              type="checkbox"
+              checked={showReviewed}
+              onChange={(e) => setShowReviewed(e.target.checked)}
+            />
+            Show reviewed
+          </label>
+        </div>
+        <p className="mt-1 text-xs text-coffee-400">
+          Unreviewed first. “Save scores” keeps a café as draft; “Save &amp; mark reviewed” records
+          your approval. Editing a reviewed café resets it to draft.
+        </p>
+        {visibleCafes.length === 0 && (
+          <p className="mt-2 rounded-lg border border-dashed border-coffee-300 p-6 text-sm text-coffee-400">
+            Every live café has curator-reviewed scores.
+          </p>
+        )}
         <div className="mt-3 space-y-3">
-          {data.cafes.map(({ cafe, score }) => {
+          {visibleCafes.map(({ cafe, score }) => {
             const current = cafeScores[cafe.id] ?? scoresFromCafeScore(score)
+            const reviewedAt = score?.scoresReviewedAt ?? null
             return (
               <div key={cafe.id} className="rounded-xl border border-coffee-200 bg-white p-4">
-                <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-semibold text-coffee-900">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 className="flex items-baseline gap-2 font-semibold text-coffee-900">
                     <Link href={`/cafes/${cafe.slug}`} className="hover:text-coffee-800">
                       {cafe.name}
                     </Link>
+                    {reviewedAt ? (
+                      <span
+                        title={new Date(reviewedAt).toLocaleString()}
+                        className="rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-800"
+                      >
+                        Reviewed
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">
+                        Draft
+                      </span>
+                    )}
                   </h3>
                   <span className="text-xs text-coffee-400">{cafe.neighborhood}</span>
                 </div>
@@ -284,13 +332,24 @@ export default function AdminDashboard({ data }: { data: AdminDashboardData }) {
                     onChange={(s) => setCafeScores((prev) => ({ ...prev, [cafe.id]: s }))}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleSaveScores(cafe.id, current)}
-                  className="mt-2 rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-600 hover:bg-coffee-100"
-                >
-                  Save scores
-                </button>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    disabled={busyId === cafe.id}
+                    onClick={() => handleSaveScores(cafe.id, current)}
+                    className="rounded-lg border border-coffee-300 px-3 py-1.5 text-sm font-medium text-coffee-600 hover:bg-coffee-100 disabled:opacity-50"
+                  >
+                    Save scores
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyId === cafe.id}
+                    onClick={() => handleSaveScores(cafe.id, current, true)}
+                    className="rounded-lg bg-green-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-800 disabled:opacity-50"
+                  >
+                    {reviewedAt ? "Save & re-mark reviewed" : "Save & mark reviewed"}
+                  </button>
+                </div>
               </div>
             )
           })}

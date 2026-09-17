@@ -54,6 +54,31 @@ describe("ScoreRepository", () => {
     expect(rows).toHaveLength(1)
   })
 
+  it("upsertCurator leaves scores unreviewed by default", async () => {
+    const created = await repo.upsertCurator(CAFE_ID, scoreInput)
+    expect(created.scoresReviewedAt).toBeNull()
+  })
+
+  it("reviewed: true sets scores_reviewed_at; reviewed: false clears it", async () => {
+    const reviewed = await repo.upsertCurator(CAFE_ID, scoreInput, { reviewed: true })
+    expect(reviewed.scoresReviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
+
+    const edited = await repo.upsertCurator(
+      CAFE_ID,
+      { ...scoreInput, quality: 2 },
+      { reviewed: false },
+    )
+    expect(edited.quality).toBe(2)
+    expect(edited.scoresReviewedAt).toBeNull()
+  })
+
+  it("omitting the reviewed option preserves an existing review timestamp", async () => {
+    const reviewed = await repo.upsertCurator(CAFE_ID, scoreInput, { reviewed: true })
+    const reseeded = await repo.upsertCurator(CAFE_ID, { ...scoreInput, quality: 3 })
+    expect(reseeded.quality).toBe(3)
+    expect(reseeded.scoresReviewedAt).toBe(reviewed.scoresReviewedAt)
+  })
+
   it("findForCafes returns a Map keyed by cafeId", async () => {
     await repo.upsertCurator(CAFE_ID, scoreInput)
     const otherId = "22222222-2222-4222-8222-222222222222"

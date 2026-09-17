@@ -45,6 +45,12 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
   remote `invited_emails`. App verifies the Access JWT — the bare email header is
   never trusted, and the workers.dev fallback fails closed (verified 2026-09-17).
 - Seed scores in `data/seed/cafes.athens.json` are drafts awaiting user review.
+  Review state lives in `cafe_scores.scores_reviewed_at` (migration 0003; NULL = draft).
+  Mark reviewed in `/admin` → Café scores → “Save & mark reviewed” (POST
+  `/api/admin/cafes/[id]/scores` with `markReviewed: true`); plain “Save scores”
+  resets to draft. `npm run seed` never touches review state. Offline checklist:
+  `npx tsx scripts/score-review-sheet.ts` → `docs/score-review-sheet.md` (local D1;
+  idempotent). Phase A1 gate: 20 / 20 reviewed.
 - Curation rule: independent specialty cafés only — no chains/franchises
   (Coffee Island, Mikel, Coffee Lab, Il Toto, etc.). Applies to seeds AND to
   what the verify agent should reject.
@@ -96,3 +102,13 @@ wrangler.jsonc: delete `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`
 - Ranking: one pure function `lib/ranking.ts` shared by UI sliders and agent tool
 - PWA: installable home-screen app (manifest + pass-through service worker + generated
   icons from `scripts/generate-icons.ts`). Online-only by design — no offline caching.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

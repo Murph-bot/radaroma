@@ -91,6 +91,7 @@ This is **not** a rewrite of `docs/megaplan.md` (build-from-spec). That plan got
 - Admin UX (or scripted checklist) to walk every seed café axis; mark `scores_reviewed_at` (or equivalent) when done.
 - Diff draft vs approved scores; regenerate any derived blurbs/chips if they depend on scores.
 - **Gate:** 100% of live verified cafés have curator-approved scores; spot-check 5 radars on prod match admin values.
+- **Tooling shipped:** `scores_reviewed_at` column (migration 0003), admin progress `N / total reviewed` + Draft/Reviewed badges + “Save & mark reviewed” per café, `scripts/score-review-sheet.ts` offline checklist. Remaining: the human pass itself (see AGENTS.md Known state).
 
 ### A2 — Coverage density (item 2)
 - Define target: ≥N verified cafés per priority neighborhood (decide N with you).

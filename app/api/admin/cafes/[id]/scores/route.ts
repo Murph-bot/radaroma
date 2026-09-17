@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/admin/auth"
 import { CafeRepository } from "@/lib/db/repositories/cafes"
 import { ScoreRepository } from "@/lib/db/repositories/scores"
 import { getDb } from "@/lib/db/sql"
-import { ScoreInputSchema } from "@/lib/schemas/score"
+import { ScoreSaveSchema } from "@/lib/schemas/score"
 
 export async function POST(
   req: Request,
@@ -19,13 +19,17 @@ export async function POST(
   } catch {
     return NextResponse.json({ error: "invalid JSON body" }, { status: 400 })
   }
-  const parsed = ScoreInputSchema.safeParse(body)
+  const parsed = ScoreSaveSchema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: "invalid scores" }, { status: 400 })
 
   const db = await getDb()
   const cafe = await new CafeRepository(db).findById(id)
   if (!cafe) return NextResponse.json({ error: "café not found" }, { status: 404 })
 
-  await new ScoreRepository(db).upsertCurator(id, parsed.data)
-  return NextResponse.json({ ok: true })
+  // Saving without markReviewed is a draft edit: it resets any prior review.
+  const { markReviewed, ...scores } = parsed.data
+  const saved = await new ScoreRepository(db).upsertCurator(id, scores, {
+    reviewed: markReviewed === true,
+  })
+  return NextResponse.json({ ok: true, scoresReviewedAt: saved.scoresReviewedAt })
 }
