@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import RankedCafeCard from "@/components/RankedCafeCard"
+import { MOODS, moodWeights, type MoodId } from "@/lib/moods"
 import { AXIS_LABELS } from "@/lib/radar"
 import { DEFAULT_WEIGHTS, rankCafes, type RankedCafe, type Weights } from "@/lib/ranking"
 import type { ScoreAxis } from "@/lib/schemas/score"
@@ -29,6 +30,7 @@ export default function CafeExplorer({
   initialQuery = "",
 }: CafeExplorerProps) {
   const [weights, setWeights] = useState<Weights>({ ...DEFAULT_WEIGHTS })
+  const [activeMood, setActiveMood] = useState<MoodId | null>(null)
   const [neighborhood, setNeighborhood] = useState("all")
   const [priceTier, setPriceTier] = useState("all")
   const [query, setQuery] = useState(initialQuery)
@@ -60,10 +62,17 @@ export default function CafeExplorer({
 
   const handleWeightChange = (axis: ScoreAxis, value: number) => {
     setWeights((w) => ({ ...w, [axis]: value }))
+    setActiveMood(null)
+  }
+
+  const handleMood = (id: MoodId) => {
+    setWeights(moodWeights(id))
+    setActiveMood(id)
   }
 
   const handleReset = () => {
     setWeights({ ...DEFAULT_WEIGHTS })
+    setActiveMood(null)
     setNeighborhood("all")
     setPriceTier("all")
     setQuery("")
@@ -85,6 +94,23 @@ export default function CafeExplorer({
           >
             Reset
           </button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Mood presets">
+          {MOODS.map((mood) => (
+            <button
+              key={mood.id}
+              type="button"
+              onClick={() => handleMood(mood.id)}
+              aria-pressed={activeMood === mood.id}
+              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition active:scale-[0.96] ${
+                activeMood === mood.id
+                  ? "border-coffee-800 bg-coffee-800 text-white"
+                  : "border-coffee-300 bg-white text-coffee-700 hover:border-coffee-600 hover:text-coffee-900"
+              }`}
+            >
+              {mood.label}
+            </button>
+          ))}
         </div>
         <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-5">
           {(Object.keys(AXIS_LABELS) as ScoreAxis[]).map((axis) => (
