@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import ConciergeChat from "@/components/ConciergeChat"
 import RadarChart, { SERIES_COLORS } from "@/components/RadarChart"
+import { curatorBlurb } from "@/lib/blurb"
 import { farthestPartner } from "@/lib/compare"
 import { getPublicCafe, getPublicCafes } from "@/lib/queries/publicCafes"
 import { priceTierLabel } from "@/lib/price"
@@ -37,6 +38,7 @@ export default async function CafeDetailPage({
 
   const { cafe, score } = ranked
   const isCommunity = cafe.source === "public_submission"
+  const blurb = curatorBlurb(cafe.verificationNotes)
   const partner = score ? farthestPartner(allRanked, slug) : null
   const compareHref = partner ? `/compare?cafes=${slug},${partner}` : "/compare"
 
@@ -117,9 +119,9 @@ export default async function CafeDetailPage({
                   </div>
                 </div>
               ))}
-              {cafe.verificationNotes && (
+              {blurb && (
                 <p className="rounded-lg bg-coffee-100 p-3 text-xs text-coffee-600">
-                  {cafe.verificationNotes}
+                  {blurb}
                 </p>
               )}
             </div>

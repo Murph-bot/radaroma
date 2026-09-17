@@ -8,7 +8,7 @@
     "lng": 23.731,
     "priceTier": 2,
     "scores": { "quality": 5, "priceValue": 3, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 5 },
-    "notes": "pioneer Greek specialty roaster with direct-relationship lots, filter program, and retail beans/gear; scores estimate"
+    "notes": "Pioneer Greek specialty roaster with direct-relationship lots, a serious filter program, and beans and gear to take home."
   },
   {
     "slug": "the-underdog-thissio",
@@ -19,7 +19,7 @@
     "lng": 23.719,
     "priceTier": 3,
     "scores": { "quality": 5, "priceValue": 3, "workFriendliness": 4, "quietVibe": 3, "specialtyDepth": 5 },
-    "notes": "championship-linked house roaster with brunch, courtyard, and retail; scores estimate"
+    "notes": "Championship-linked house roaster with a full brunch menu, a shaded courtyard, and retail shelves."
   },
   {
     "slug": "foyer-espresso-bar",
@@ -30,7 +30,7 @@
     "lng": 23.744,
     "priceTier": 2,
     "scores": { "quality": 5, "priceValue": 4, "workFriendliness": 2, "quietVibe": 4, "specialtyDepth": 4 },
-    "notes": "small multi-roaster brew bar with espresso and hand-brew focus, limited seating; scores estimate"
+    "notes": "Small multi-roaster brew bar focused on espresso and hand brews; limited seating, mostly a stop-and-sip."
   },
   {
     "slug": "mind-the-cup",
@@ -41,7 +41,7 @@
     "lng": 23.692,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 4, "workFriendliness": 4, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "west Athens roastery bar with food, outdoor seating, and late hours; scores estimate"
+    "notes": "West Athens roastery bar with food, outdoor seating, and late hours."
   },
   {
     "slug": "kudu-coffee-neo-psychiko",
@@ -52,7 +52,7 @@
     "lng": 23.785,
     "priceTier": 3,
     "scores": { "quality": 5, "priceValue": 3, "workFriendliness": 4, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "suburban roaster cafe with hand brew, breakfast, and beans to go; scores estimate"
+    "notes": "Suburban roaster café doing hand brews, breakfast, and beans to go."
   },
   {
     "slug": "samba-coffee-roasters",
@@ -63,7 +63,7 @@
     "lng": 23.734,
     "priceTier": 2,
     "scores": { "quality": 5, "priceValue": 3, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "compact roaster shop with competition-linked espresso and brew gear; scores estimate"
+    "notes": "Compact roaster shop with competition-linked espresso and a proper brew-gear shelf."
   },
   {
     "slug": "create-coffee-roasters",
@@ -74,7 +74,7 @@
     "lng": 23.773,
     "priceTier": 3,
     "scores": { "quality": 5, "priceValue": 3, "workFriendliness": 3, "quietVibe": 4, "specialtyDepth": 5 },
-    "notes": "coffee experience center with workshops, filter, and house-roasted beans; scores estimate"
+    "notes": "Coffee experience center with workshops, filter options, and house-roasted beans."
   },
   {
     "slug": "taresso-artisan-coffee",
@@ -85,7 +85,7 @@
     "lng": 23.766,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 4, "workFriendliness": 4, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "practical roaster cafe near Panormou with espresso, filter, and retail beans; scores estimate"
+    "notes": "Practical roaster café near Panormou — espresso, filter, and retail beans."
   },
   {
     "slug": "little-tree-books-coffee",
@@ -96,7 +96,7 @@
     "lng": 23.72,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 3, "workFriendliness": 5, "quietVibe": 4, "specialtyDepth": 3 },
-    "notes": "bookshop-cafe near the Acropolis, calm reading-friendly space; scores estimate"
+    "notes": "Bookshop café near the Acropolis; a calm, reading-friendly room."
   },
   {
     "slug": "dope-roasting-co",
@@ -107,7 +107,7 @@
     "lng": 23.726,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 3, "workFriendliness": 4, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "roaster with single-origin program, two-level space, power sockets and wifi; scores estimate"
+    "notes": "Roaster with a single-origin program, a two-level space, power sockets, and wifi."
   },
   {
     "slug": "picky-specialty-coffee",
@@ -118,7 +118,7 @@
     "lng": 23.722,
     "priceTier": 3,
     "scores": { "quality": 4, "priceValue": 3, "workFriendliness": 3, "quietVibe": 2, "specialtyDepth": 3 },
-    "notes": "brunch-led specialty coffee in lively Psyrri; scores estimate"
+    "notes": "Brunch-led specialty coffee in lively Psyrri."
   },
   {
     "slug": "jaf-specialty-coffee",
@@ -129,7 +129,7 @@
     "lng": 23.732,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 4, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 3 },
-    "notes": "central specialty coffee stop near Plateia Kaniggos; scores estimate"
+    "notes": "Central specialty stop near Plateia Kaniggos."
   },
   {
     "slug": "mokka-specialty-coffee",
@@ -140,7 +140,7 @@
     "lng": 23.727,
     "priceTier": 2,
     "scores": { "quality": 5, "priceValue": 4, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "roaster-owned since 1999 with in-house roasted espresso and filter; scores estimate"
+    "notes": "Roaster-owned since 1999, pouring in-house espresso and filter."
   },
   {
     "slug": "kaya-coffee",
@@ -151,7 +151,7 @@
     "lng": 23.733,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 4, "workFriendliness": 2, "quietVibe": 3, "specialtyDepth": 3 },
-    "notes": "compact takeaway specialty coffee spot in Syntagma; scores estimate"
+    "notes": "Compact takeaway-focused specialty spot in Syntagma."
   },
   {
     "slug": "handpickers-coffee",
@@ -162,7 +162,7 @@
     "lng": 23.704,
     "priceTier": 2,
     "scores": { "quality": 5, "priceValue": 4, "workFriendliness": 4, "quietVibe": 4, "specialtyDepth": 5 },
-    "notes": "crop-to-cup roastery with hand-picked lots and a retail focus; scores estimate"
+    "notes": "Crop-to-cup roastery with hand-picked lots and a retail focus."
   },
   {
     "slug": "honest-coffee-developers",
@@ -173,7 +173,7 @@
     "lng": 23.754,
     "priceTier": 2,
     "scores": { "quality": 5, "priceValue": 4, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 5 },
-    "notes": "micro-lot roaster with light roasts, plant-based snacks, and strict sourcing; scores estimate"
+    "notes": "Micro-lot roaster doing light roasts, plant-based snacks, and strict sourcing."
   },
   {
     "slug": "hunch-specialty-coffee",
@@ -184,7 +184,7 @@
     "lng": 23.806,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 4, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 3 },
-    "notes": "Chalandri neighborhood specialty bar; scores estimate"
+    "notes": "Chalandri neighborhood specialty bar."
   },
   {
     "slug": "mour-athens",
@@ -195,7 +195,7 @@
     "lng": 23.721,
     "priceTier": 3,
     "scores": { "quality": 4, "priceValue": 3, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 3 },
-    "notes": "specialty coffee by Kudu Roasters with focaccia brunch; scores estimate"
+    "notes": "Specialty coffee by KUDU Roasters with a focaccia brunch menu."
   },
   {
     "slug": "sweetleaf-glyfada",
@@ -206,6 +206,18 @@
     "lng": 23.762,
     "priceTier": 2,
     "scores": { "quality": 4, "priceValue": 4, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 4 },
-    "notes": "long-running independent roastery-café on the riviera side — single origins and blends; coords approximate; scores estimate"
+    "notes": "Long-running independent roastery café on the riviera side — single origins and blends."
+  },
+  {
+    "slug": "zambri",
+    "name": "Zambri",
+    "address": "Agiou Dimitriou 9, Kifisia 145 62",
+    "neighborhood": "Kifisia",
+    "lat": 38.074,
+    "lng": 23.811,
+    "priceTier": 2,
+    "source": "public_submission",
+    "scores": { "quality": 4, "priceValue": 3, "workFriendliness": 3, "quietVibe": 3, "specialtyDepth": 3 },
+    "notes": "All-day café and brunch spot on a Kifisia side street, pouring Illy espresso and cold brew."
   }
 ]

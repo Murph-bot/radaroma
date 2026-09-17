@@ -23,6 +23,7 @@ const SeedCafeSchema = z.object({
   lng: z.number(),
   neighborhood: z.string().min(1),
   priceTier: z.number().int().min(1).max(4),
+  source: z.enum(["owner", "public_submission"]).optional().default("owner"),
   scores: ScoreInputSchema,
   notes: z.string().optional().default(""),
 })
@@ -62,7 +63,7 @@ async function main() {
       `insert into cafes (
         id, slug, name, address, lat, lng, neighborhood, price_tier, source,
         status, confidence_score, verification_notes, created_at, updated_at
-      ) values (?, ?, ?, ?, ?, ?, ?, ?, 'owner', 'verified', NULL, ?, ?, ?)
+      ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, 'verified', NULL, ?, ?, ?)
       on conflict (slug) do update set
         name = excluded.name,
         address = excluded.address,
@@ -81,6 +82,7 @@ async function main() {
         e.lng,
         e.neighborhood,
         e.priceTier,
+        e.source,
         e.notes,
         now,
         now,
@@ -94,7 +96,7 @@ async function main() {
     const s = (v: number | null): string => (v === null ? "NULL" : String(v))
     statements.push(
       `insert into cafes (id, slug, name, address, lat, lng, neighborhood, price_tier, source, status, confidence_score, verification_notes, created_at, updated_at)
- values (${sqlLiteral(randomUUID())}, ${sqlLiteral(e.slug)}, ${sqlLiteral(e.name)}, ${sqlLiteral(e.address)}, ${s(e.lat)}, ${s(e.lng)}, ${sqlLiteral(e.neighborhood)}, ${e.priceTier}, 'owner', 'verified', NULL, ${sqlLiteral(e.notes)}, ${sqlLiteral(now)}, ${sqlLiteral(now)})
+ values (${sqlLiteral(randomUUID())}, ${sqlLiteral(e.slug)}, ${sqlLiteral(e.name)}, ${sqlLiteral(e.address)}, ${s(e.lat)}, ${s(e.lng)}, ${sqlLiteral(e.neighborhood)}, ${e.priceTier}, ${sqlLiteral(e.source)}, 'verified', NULL, ${sqlLiteral(e.notes)}, ${sqlLiteral(now)}, ${sqlLiteral(now)})
  on conflict (slug) do update set name = excluded.name, address = excluded.address, lat = excluded.lat, lng = excluded.lng, neighborhood = excluded.neighborhood, price_tier = excluded.price_tier, verification_notes = excluded.verification_notes, updated_at = excluded.updated_at;`,
     )
     statements.push(
