@@ -17,12 +17,32 @@ export class ScoreRepository {
     return row ? parseCafeScoreRow(row) : null
   }
 
-  // Bulk fetch for list pages: returns scores keyed by cafeId.
+  // Public detail page: curator score only once review is complete.
+  async findReviewedForCafe(cafeId: string): Promise<CafeScore | null> {
+    const row = await this.db.get(
+      "select * from cafe_scores where cafe_id = ? and scored_by = 'curator' and scores_reviewed_at is not null",
+      [cafeId],
+    )
+    return row ? parseCafeScoreRow(row) : null
+  }
+
+  // Bulk fetch for admin/list pages: returns scores keyed by cafeId.
   async findForCafes(cafeIds: string[]): Promise<Map<string, CafeScore>> {
+    return this.bulk(cafeIds, false)
+  }
+
+  // Bulk fetch for PUBLIC ranking: drafts (scores_reviewed_at is null) are
+  // left out so unreviewed numbers can never steer a public list.
+  async findReviewedForCafes(cafeIds: string[]): Promise<Map<string, CafeScore>> {
+    return this.bulk(cafeIds, true)
+  }
+
+  private async bulk(cafeIds: string[], reviewedOnly: boolean): Promise<Map<string, CafeScore>> {
     if (cafeIds.length === 0) return new Map()
     const placeholders = cafeIds.map(() => "?").join(", ")
+    const gate = reviewedOnly ? " and scores_reviewed_at is not null" : ""
     const rows = await this.db.all(
-      `select * from cafe_scores where cafe_id in (${placeholders}) and scored_by = 'curator'`,
+      `select * from cafe_scores where cafe_id in (${placeholders}) and scored_by = 'curator'${gate}`,
       cafeIds,
     )
     return new Map(rows.map((row) => [row.cafe_id as string, parseCafeScoreRow(row)]))

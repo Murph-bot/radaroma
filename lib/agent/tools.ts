@@ -185,7 +185,7 @@ const queryCafesByWeights: AgentTool = {
     const cafes = new CafeRepository(ctx.db)
     const scores = new ScoreRepository(ctx.db)
     const all = await cafes.findVerified()
-    const scoreMap = await scores.findForCafes(all.map((c) => c.id))
+    const scoreMap = await scores.findReviewedForCafes(all.map((c) => c.id))
     const merged: Weights = {
       ...DEFAULT_WEIGHTS,
       ...(weights ?? {}),

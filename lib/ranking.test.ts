@@ -3,6 +3,7 @@ import {
   DEFAULT_WEIGHTS,
   formatMatchLabel,
   isCustomWeights,
+  isReviewed,
   rankCafes,
   weightedScore,
   type Weights,
@@ -33,7 +34,7 @@ const score = (id: string, values: Partial<CafeScore> = {}): CafeScore => ({
   workFriendliness: 3,
   quietVibe: 3,
   specialtyDepth: 3,
-  scoresReviewedAt: null,
+  scoresReviewedAt: "2026-09-01T00:00:00.000Z",
   ...values,
 })
 
@@ -58,6 +59,24 @@ describe("weightedScore", () => {
 
 describe("rankCafes", () => {
   const cafes = [cafe("a", "Alpha"), cafe("b", "Beta"), cafe("c", "Gamma"), cafe("d", "Delta")]
+
+  it("ignores draft (unreviewed) scores so they cannot steer the public rank", () => {
+    const scores = new Map<string, CafeScore>([
+      ["a", score("a", { quality: 5, priceValue: 5, workFriendliness: 5, quietVibe: 5, specialtyDepth: 5, scoresReviewedAt: null })],
+      ["b", score("b", { quality: 2 })],
+    ])
+    const ranked = rankCafes([cafes[0], cafes[1]], scores)
+    expect(ranked.map((r) => r.cafe.id)).toEqual(["b", "a"])
+    expect(ranked[1].score).toBeNull()
+    expect(ranked[1].rankScore).toBeNull()
+  })
+
+  it("isReviewed is false for null, missing, and draft scores", () => {
+    expect(isReviewed(null)).toBe(false)
+    expect(isReviewed(undefined)).toBe(false)
+    expect(isReviewed(score("a", { scoresReviewedAt: null }))).toBe(false)
+    expect(isReviewed(score("a"))).toBe(true)
+  })
 
   it("orders by weighted score descending", () => {
     const scores = new Map([

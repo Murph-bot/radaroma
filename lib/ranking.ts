@@ -51,15 +51,22 @@ export function weightedScore(score: CafeScore, weights: Weights): number {
   return weighted / totalWeight
 }
 
-// Rank a set of cafés against their scores. Cafés without a score sort last,
-// ties break alphabetically by name.
+// A curator score only counts once a human has signed it off.
+export function isReviewed(score: CafeScore | null | undefined): score is CafeScore {
+  return !!score && score.scoresReviewedAt !== null
+}
+
+// Rank a set of cafés against their scores. Draft (unreviewed) scores are
+// treated as missing; cafés without a score sort last, ties break
+// alphabetically by name.
 export function rankCafes(
   cafes: Cafe[],
   scores: Map<string, CafeScore>,
   weights: Weights = DEFAULT_WEIGHTS,
 ): RankedCafe[] {
   const ranked: RankedCafe[] = cafes.map((cafe) => {
-    const score = scores.get(cafe.id) ?? null
+    const candidate = scores.get(cafe.id)
+    const score = isReviewed(candidate) ? candidate : null
     return {
       cafe,
       score,
